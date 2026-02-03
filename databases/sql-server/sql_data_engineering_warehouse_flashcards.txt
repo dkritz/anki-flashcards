@@ -1,0 +1,441 @@
+# SQL Data Engineering & Stored Procedures Flashcards
+
+## SQL Query Writing & Optimization
+
+**Question: What's the difference between CTEs and subqueries? When should you use each?**
+**Answer:** CTEs (WITH clauses) are reusable named expressions that improve readability and can be referenced multiple times. Subqueries are embedded and execute for each row. Use CTEs for complex, multi-reference logic; subqueries for simple, single-use filtering.
+
+---
+
+**Question: When should you use EXISTS vs IN for subqueries?**
+**Answer:** Use EXISTS when checking for existence (stops at first match, faster for large tables). Use IN for small lists or when you need actual values. EXISTS handles NULLs better and is generally more efficient for correlated subqueries.
+
+---
+
+**Question: What's wrong with SELECT * in production queries?**
+**Answer:** SELECT * retrieves unnecessary columns increasing I/O, network traffic, and memory usage. It breaks when table schema changes and prevents index covering. Always specify only needed columns.
+
+---
+
+**Question: How do you identify and fix N+1 query problems?**
+**Answer:** N+1 queries execute one query for parent records plus one per child record. Fix by using JOINs to fetch all data in a single query, or use batch loading with WHERE IN clauses to fetch related data in bulk.
+
+---
+
+**Question: What's the difference between WHERE and HAVING clauses?**
+**Answer:** WHERE filters rows before grouping/aggregation (executes first). HAVING filters after GROUP BY aggregation (can reference aggregate functions like COUNT, SUM). Use WHERE for row-level filtering, HAVING for group-level.
+
+---
+
+**Question: When should you use a cursor vs set-based operations?**
+**Answer:** Avoid cursors when possible - they're slow and resource-intensive. Use set-based operations for 99% of cases. Only use cursors for row-by-row processing when you must execute different logic per row or procedural operations that can't be set-based.
+
+---
+
+**Question: What's the performance impact of implicit conversions in SQL?**
+**Answer:** Implicit conversions prevent index usage, forcing table scans and slowing queries by 10x or more. They occur when comparing different data types (e.g., VARCHAR to NVARCHAR, INT to BIGINT). Always use explicit CAST/CONVERT and match data types in joins/filters.
+
+---
+
+## Window Functions & Advanced SQL
+
+**Question: What's the difference between ROW_NUMBER(), RANK(), and DENSE_RANK()?**
+**Answer:** ROW_NUMBER() gives unique sequential numbers. RANK() gives same rank to ties then skips numbers (1,1,3). DENSE_RANK() gives same rank to ties with no gaps (1,1,2). Use ROW_NUMBER for unique IDs, RANK/DENSE_RANK for percentile calculations.
+
+---
+
+**Question: How do you calculate running totals using window functions?**
+**Answer:** Use SUM(column) OVER (ORDER BY date_column ROWS UNBOUNDED PRECEDING). This sums all rows from start to current row. For moving windows, specify ROWS BETWEEN N PRECEDING AND CURRENT ROW.
+
+---
+
+**Question: What's the difference between LAG/LEAD and FIRST_VALUE/LAST_VALUE?**
+**Answer:** LAG/LEAD access specific offset rows (previous/next N rows). FIRST_VALUE/LAST_VALUE return values from first/last row in the window frame. LAG/LEAD are better for time-series comparisons; FIRST_VALUE/LAST_VALUE for window boundaries.
+
+---
+
+**Question: How do you handle gaps and islands problems in time-series data?**
+**Answer:** Use window functions to identify consecutive sequences: DENSE_RANK() OVER (ORDER BY date) - date to create groups, then aggregate by group. This finds continuous periods and gaps in sequences.
+
+---
+
+**Question: What are the different window frame specifications and their use cases?**
+**Answer:** ROWS: physical row count (use when row order matters). RANGE: logical value-based (handles ties). GROUPS: peer groups (all tied values). Most queries use ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW for running totals.
+
+---
+
+## Stored Procedure Design
+
+**Question: What are the key principles of writing maintainable stored procedures?**
+**Answer:** Single responsibility (one logical operation), consistent naming conventions, parameter validation at start, use TRY/CATCH for error handling, include logging, avoid SELECT *, document with comments, keep under 200 lines or break into smaller procedures.
+
+---
+
+**Question: How do you prevent SQL injection in stored procedures?**
+**Answer:** Always use parameterized queries/sp_executesql with parameters, never concatenate user input into SQL strings. Validate input parameters (length, type, whitelist values). Use QUOTENAME() for dynamic object names. Avoid EXEC with string concatenation.
+
+---
+
+**Question: What's the proper structure for error handling in stored procedures?**
+**Answer:** Use BEGIN TRY...END TRY with BEGIN CATCH...END CATCH. Capture ERROR_NUMBER(), ERROR_MESSAGE(), ERROR_LINE(), ERROR_PROCEDURE(). Log errors to table, use RAISERROR or THROW to re-raise, always check XACT_STATE() for transaction status.
+
+---
+
+**Question: Should you use RETURN or OUTPUT parameters in stored procedures?**
+**Answer:** Use RETURN for status codes (0=success, non-zero=failure). Use OUTPUT parameters for returning scalar values. Use result sets for tabular data. Avoid mixing multiple return methods in one procedure - be consistent.
+
+---
+
+**Question: What's the difference between sp_executesql and EXEC in dynamic SQL?**
+**Answer:** sp_executesql uses parameterized queries (plan cache reuse, prevents injection). EXEC executes string directly (vulnerable to injection, plan cache bloat). Always prefer sp_executesql with parameters for dynamic SQL.
+
+---
+
+**Question: How do you handle transactions properly in stored procedures?**
+**Answer:** Check @@TRANCOUNT at start to avoid nested transactions. Use BEGIN TRAN only when needed. Always check XACT_STATE() in CATCH blocks (-1=uncommittable, 0=no transaction, 1=active). Use SAVE TRANSACTION for partial rollback points.
+
+---
+
+**Question: What is parameter sniffing in stored procedures and how do you fix it?**
+**Answer:** SQL Server caches execution plan based on first execution's parameter values, which may be suboptimal for different values. Fix with OPTION (RECOMPILE) for varying data distributions, use local variables, or optimize for UNKNOWN.
+
+---
+
+## Data Warehouse Design
+
+**Question: What's the difference between star schema and snowflake schema?**
+**Answer:** Star: Denormalized dimensions directly connected to fact table (faster queries, simpler). Snowflake: Normalized dimensions split into sub-dimensions (saves storage, more complex joins). Most warehouses use star schema for query performance.
+
+---
+
+**Question: What are the different types of slowly changing dimensions (SCD)?**
+**Answer:** Type 0: Never change. Type 1: Overwrite old value (no history). Type 2: Add new row with versioning (full history - most common). Type 3: Add new column for previous value (limited history). Type 4: History in separate table. Type 6: Hybrid (1+2+3).
+
+---
+
+**Question: How do you implement Type 2 SCD in a data warehouse?**
+**Answer:** Add effective_date, expiration_date, and is_current flag columns. When data changes: update existing row's expiration_date and is_current, insert new row with new values and current flag. Use MERGE statement or stored procedure to handle updates.
+
+---
+
+**Question: What should you include in a fact table vs a dimension table?**
+**Answer:** Fact tables contain measurable business events (sales, clicks) with foreign keys to dimensions and numeric measures. Dimension tables contain descriptive attributes (customer info, product details) that provide context to facts. Facts=what happened, Dimensions=how to analyze it.
+
+---
+
+**Question: What are degenerate dimensions and when do you use them?**
+**Answer:** Degenerate dimensions are dimension keys stored directly in the fact table without a separate dimension table (e.g., invoice_number, order_id). Use when dimension has no attributes other than the natural key and provides no analytical value as a separate table.
+
+---
+
+**Question: What is a junk dimension and when should you create one?**
+**Answer:** Junk dimension combines multiple low-cardinality flags/indicators (yes/no fields, status codes) into a single dimension table to reduce fact table width. Create when you have many binary or small enum fields that would clutter the fact table.
+
+---
+
+**Question: How do you handle late-arriving dimensions in ETL?**
+**Answer:** Use "unknown" surrogate key (typically -1 or 0) in fact table when dimension data hasn't arrived yet. Create placeholder dimension rows with natural key and unknown values. When dimension data arrives, update the placeholder or add new SCD Type 2 row.
+
+---
+
+**Question: What is a conformed dimension and why is it important?**
+**Answer:** Conformed dimensions are shared across multiple fact tables/data marts with consistent meaning and structure. Critical for enterprise warehouses to ensure consistent reporting across different business processes and departments.
+
+---
+
+## ETL Patterns & Data Integration
+
+**Question: What's the difference between ETL and ELT? When do you use each?**
+**Answer:** ETL: Transform before loading (traditional, good for complex cleansing). ELT: Load raw then transform (leverages modern MPP databases, faster for large volumes). Use ELT when target system is powerful (Snowflake, BigQuery), ETL for complex business rules or legacy systems.
+
+---
+
+**Question: What are the best practices for incremental data loads?**
+**Answer:** Use high-watermark tracking (last_modified timestamp, checksums, or CDC). Load only changed rows since last run. Maintain load audit tables with timestamps and row counts. Implement change detection to skip unchanged rows early in pipeline.
+
+---
+
+**Question: How do you handle data quality issues during ETL?**
+**Answer:** Implement validation rules (data types, ranges, referential integrity). Log rejected rows to error tables with error codes. Use fuzzy matching for deduplication. Set data quality thresholds (fail job if >X% errors). Create data quality dashboards.
+
+---
+
+**Question: What is the merge pattern for slowly changing dimensions?**
+**Answer:** Use MERGE statement to UPSERT: WHEN MATCHED AND different THEN UPDATE (Type 1) or INSERT new row (Type 2), WHEN NOT MATCHED THEN INSERT. Handle both updates to existing records and new record inserts in single atomic operation.
+
+---
+
+**Question: How do you design idempotent ETL processes?**
+**Answer:** Ensure rerunning the process produces same result (no duplicates). Use MERGE/UPSERT instead of blind INSERT. Truncate and load for full refreshes. Include load timestamps to identify/replace existing data. Design for "at least once" delivery semantics.
+
+---
+
+**Question: What are the pros/cons of using MERGE vs separate INSERT/UPDATE statements?**
+**Answer:** MERGE: Single statement, atomic, concise, handles both operations. INSERT/UPDATE: More control over each operation, easier to debug, sometimes better performance for large batches, can have different logic for insert vs update.
+
+---
+
+## Change Management & Warehouse Evolution
+
+**Question: How do you safely add a new column to a large fact table?**
+**Answer:** For SQL Server: ALTER TABLE with NULL default first (metadata-only), then populate in batches, add constraints/indexes last. Avoid adding NOT NULL columns without defaults on large tables. Consider creating new table and swapping if adding many columns.
+
+---
+
+**Question: What's the best approach for renaming a column in a warehouse?**
+**Answer:** Don't rename - create new column, populate from old, update all references, mark old as deprecated, remove after transition period. Or use views to abstract column names. Renaming breaks existing queries, reports, and integrations.
+
+---
+
+**Question: How do you version your data warehouse schema changes?**
+**Answer:** Use migration scripts with version numbers (001_create_table.sql, 002_add_column.sql). Store in version control (Git). Maintain forward and rollback scripts. Track which versions are applied in database (schema_version table). Never modify deployed scripts.
+
+---
+
+**Question: What is a data lineage and why is it important for warehouse changes?**
+**Answer:** Data lineage tracks data flow from source to destination through transformations. Critical for impact analysis when changing upstream systems, debugging data issues, compliance (GDPR), and understanding dependencies before making schema changes.
+
+---
+
+**Question: How do you handle schema drift in data sources?**
+**Answer:** Monitor source schema changes with automated checks. Use flexible schemas (variant/JSON columns) for semi-structured data. Implement schema validation in ETL pipeline. Create alerts when source structure changes. Maintain schema versions and adapt ETL accordingly.
+
+---
+
+**Question: What's the best way to deprecate an old table or column?**
+**Answer:** 1) Announce deprecation timeline, 2) Create views/procedures as abstraction layer, 3) Redirect writes to new structure, 4) Dual-write to old and new during transition, 5) Mark old as read-only, 6) Monitor usage, 7) Remove when no longer used.
+
+---
+
+**Question: How do you implement blue-green deployments for data warehouses?**
+**Answer:** Maintain two identical environments. Deploy changes to inactive (green) environment while blue is live. Test thoroughly. Switch traffic to green (simple connection string change). Keep blue as rollback option. Synchronize data changes between environments.
+
+---
+
+## Performance Optimization
+
+**Question: How do you identify slow queries in a data warehouse?**
+**Answer:** Query DMVs like sys.dm_exec_query_stats for high duration/CPU/IO. Look at execution plans for table scans, key lookups, sorts. Check for implicit conversions, parameter sniffing. Use Query Store in SQL Server to track performance over time.
+
+---
+
+**Question: What are the best indexing strategies for data warehouse fact tables?**
+**Answer:** Clustered index on date/surrogate key for time-based queries. Non-clustered indexes on frequently filtered dimension foreign keys. Columnstore indexes for large analytical tables (1M+ rows). Avoid over-indexing - they slow loads. Index maintenance is critical.
+
+---
+
+**Question: When should you use columnstore indexes in a warehouse?**
+**Answer:** Use for large fact tables (millions+ rows) with analytical queries aggregating many rows. Provides 10x compression and fast scan performance. Not for small tables, singleton lookups, or heavy OLTP-style updates. Ideal for star schema fact tables.
+
+---
+
+**Question: How do you optimize date range queries in a warehouse?**
+**Answer:** Use clustered indexes on date columns. Avoid functions on date columns in WHERE clauses (prevents index usage). Pre-aggregate data by date hierarchies (daily, monthly, yearly tables). Use partition elimination with table partitioning on date ranges.
+
+---
+
+**Question: What are common causes of query timeouts in data warehouses?**
+**Answer:** Missing indexes causing table scans, outdated statistics, implicit conversions, parameter sniffing with bad plans, locking/blocking during ETL loads, Cartesian products from bad joins, memory pressure, tempdb contention, network latency for large result sets.
+
+---
+
+**Question: How do you handle large data exports without blocking?**
+**Answer:** Use READ UNCOMMITTED isolation or SNAPSHOT isolation to avoid locks. Export from read replica/reporting database instead of primary. Use NOLOCK hint carefully (dirty reads acceptable). Paginate exports with keyset pagination (WHERE id > last_id).
+
+---
+
+## Data Quality & Validation
+
+**Question: What checks should you implement in warehouse ETL for data quality?**
+**Answer:** Null checks, data type validation, range checks (min/max values), referential integrity, duplicate detection, format validation (dates, emails), business rule validation, referential consistency between dimensions and facts, row count validation, checksum validation.
+
+---
+
+**Question: How do you detect and handle duplicate records in ETL?**
+**Answer:** Use ROW_NUMBER() OVER (PARTITION BY business_key ORDER BY load_date) to identify duplicates. Keep first/latest based on timestamp. Log duplicates to quarantine table. Investigate source data issues if duplicates are frequent. Implement merge logic to handle gracefully.
+
+---
+
+**Question: What is referential integrity and how do you enforce it in warehouses?**
+**Answer:** Ensures foreign keys in fact tables reference valid dimension records. Enforce with FK constraints or ETL validation. Use unknown dimension rows (-1 keys) for orphaned facts. Monitor RI violations in data quality reports. Critical for accurate reporting.
+
+---
+
+**Question: How do you validate that your ETL loaded the correct amount of data?**
+**Answer:** Compare source row counts to target. Use checksums or hash totals for aggregated data. Validate date ranges loaded match expected window. Check for unexpected nulls or zeros. Compare key metrics (sum of sales, record counts) between source and target.
+
+---
+
+## Advanced Patterns
+
+**Question: What is the bridge table pattern and when do you use it?**
+**Answer:** Bridge table resolves many-to-many relationships between dimensions (e.g., customer to multiple accounts) or handles multi-valued dimensions in fact tables. Contains foreign keys to related dimensions plus weighting factors if needed for allocation.
+
+---
+
+**Question: How do you implement a time-of-day dimension for intraday analysis?**
+**Answer:** Create time dimension with grain (minute, 15-min, hour) containing time attributes (hour, minute, am_pm, business_hour_flag, shift). Use time_key as foreign key in fact table alongside date_key. Enables analysis by time periods independent of calendar date.
+
+---
+
+**Question: What is a mini-dimension and when should you use one?**
+**Answer:** Mini-dimension separates frequently changing attributes from slowly changing main dimension (e.g., customer_preferences separate from customer_profile). Reduces Type 2 SCD overhead by isolating volatile attributes into smaller dimension with direct FK to fact table.
+
+---
+
+**Question: How do you handle hierarchical data in a warehouse (org chart, product categories)?**
+**Answer:** Store flattened hierarchy in dimension with levels (level1, level2, level3) and parent-child columns. Use recursive CTEs for traversal if needed. Consider closure table for complex hierarchies. Pre-calculate paths for common queries to avoid runtime recursion.
+
+---
+
+**Question: What is a snapshot fact table and when do you use it?**
+**Answer:** Snapshot fact table captures state at regular intervals (inventory levels, account balances) rather than events. Usually partitioned by snapshot date. Enables trend analysis over time. Often loaded as full snapshot or incremental with last-known values.
+
+---
+
+## Anti-Patterns to Avoid
+
+**Question: Why should you avoid using SELECT DISTINCT to fix data quality issues?**
+**Answer:** DISTINCT masks underlying data quality problems rather than fixing them. It's expensive (sorts entire result set). If you need DISTINCT, investigate why duplicates exist in source data or ETL process. Fix the root cause, don't hide it.
+
+---
+
+**Question: What's wrong with using cursors for large data operations?**
+**Answer:** Cursors process row-by-row (RBAR) vs set-based. They're 100x slower, use more memory, hold locks longer, don't scale. Only use when you must execute different logic per row. Replace with set-based operations, window functions, or MERGE statements.
+
+---
+
+**Question: Why is using NOLOCK hint dangerous in production queries?**
+**Answer:** NOLOCK (READ UNCOMMITTED) reads uncommitted data (dirty reads), missing rows, and duplicate rows during page splits. Can return inconsistent results. Only acceptable for approximations or when data consistency doesn't matter. Use SNAPSHOT isolation instead.
+
+---
+
+**Question: What's the problem with SELECT * in production views?**
+**Answer:** SELECT * in views binds columns at creation time, not runtime. Adding columns to underlying table doesn't appear in view. Column order changes can break applications. Deleted columns cause errors. Always explicitly list columns in production views.
+
+---
+
+**Question: Why should you avoid using GUIDs as clustered index keys?**
+**Answer:** Random GUIDs cause page splits and fragmentation (100% fill factor becomes 50%). Slows inserts significantly. Wastes storage. Use sequential GUIDs (NEWSEQUENTIALID) or integer identity columns for clustered indexes. GUIDs fine for non-clustered PK.
+
+---
+
+**Question: What's the issue with using functions on indexed columns in WHERE clauses?**
+**Answer:** Functions on columns (YEAR(date_col), UPPER(name)) prevent index usage and force table scans. Instead, rewrite to compare raw column: date_col >= '2024-01-01' AND date_col < '2024-02-01'. Use computed columns with indexes if you query transformed values often.
+
+---
+
+## SQL Patterns & Idioms
+
+**Question: How do you pivot data from rows to columns in SQL?**
+**Answer:** Use PIVOT operator or CASE statements with aggregation. PIVOT is cleaner: SELECT ... FROM source PIVOT (AGG(column) FOR pivot_column IN (value1, value2)). For dynamic pivoting, use dynamic SQL with sp_executesql. Consider unpivoting first if data is messy.
+
+---
+
+**Question: How do you unpivot columns to rows?**
+**Answer:** Use UNPIVOT operator: SELECT id, attribute, value FROM source UNPIVOT (value FOR attribute IN (col1, col2, col3)). Or use CROSS APPLY with VALUES clause for more control over output column names and filtering.
+
+---
+
+**Question: What's the best way to find gaps in a sequence?**
+**Answer:** Use LEAD/LAG window functions: SELECT curr_id + 1 as gap_start, next_id - 1 as gap_end FROM (SELECT id, LEAD(id) OVER (ORDER BY id) as next_id FROM table) WHERE next_id > curr_id + 1. Self-joins or NOT EXISTS also work but slower.
+
+---
+
+**Question: How do you calculate percentiles (median, quartiles) in SQL?**
+**Answer:** Use PERCENTILE_CONT or PERCENTILE_DISC with WITHIN GROUP: SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY value) OVER (PARTITION BY group) as median. For older versions, use NTILE() or ROW_NUMBER() with counting logic.
+
+---
+
+**Question: What's the pattern for top-N per group queries?**
+**Answer:** Use ROW_NUMBER() partitioned by group: SELECT * FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY category ORDER BY sales DESC) as rn FROM sales) WHERE rn <= N. Alternative: CROSS APPLY with TOP N for different logic per group.
+
+---
+
+**Question: How do you handle division by zero safely in SQL queries?**
+**Answer:** Use NULLIF to return NULL on zero: dividend / NULLIF(divisor, 0). Or use CASE: CASE WHEN divisor = 0 THEN 0 ELSE dividend / divisor END. Consider using TRY_CAST or TRY_CONVERT for additional safety with data type conversions.
+
+---
+
+## Modern SQL Features
+
+**Question: What are JSON functions useful for in SQL Server?**
+**Answer:** Parse JSON with OPENJSON or JSON_VALUE. Query JSON with JSON_QUERY. Modify with JSON_MODIFY. Store semi-structured data, flexible schemas, or API responses. Good for configuration, logging, or variable schemas. Not for heavy querying - normalize important fields.
+
+---
+
+**Question: When should you use temporal tables (system-versioned)?**
+**Answer:** Temporal tables automatically track row history with valid_from/valid_to dates. Use when you need audit history, point-in-time analysis, or slowly changing data without managing it yourself. Query AS OF, BETWEEN, CONTAINED IN for historical data.
+
+---
+
+**Question: What are the benefits of using memory-optimized tables?**
+**Answer:** Memory-optimized tables (In-Memory OLTP) store data in RAM for ultra-fast transactions (10-100x faster). No locks/latches (optimistic concurrency). Good for high-throughput OLTP, staging tables, session state. Not for large analytical tables (no columnstore).
+
+---
+
+**Question: How do you use Query Store for performance monitoring?**
+**Answer:** Query Store captures query text, plans, and runtime stats over time. Identify regressed queries, forced plans, resource consumption trends. Use to force specific execution plans, compare plan performance, find ad-hoc queries consuming resources. Enable in database properties.
+
+---
+
+**Question: What is the STRING_AGG function and what did it replace?**
+**Answer:** STRING_AGG concatenates values with separator: STRING_AGG(column, ',') WITHIN GROUP (ORDER BY column). Replaces complex FOR XML PATH or recursive CTE concatenation patterns. Available SQL Server 2017+. Much simpler and faster than old workarounds.
+
+---
+
+## Testing & Debugging
+
+**Question: How do you unit test stored procedures?**
+**Answer:** Use tSQLt framework or custom test procedures. Set up test data in transactions that roll back. Assert expected vs actual results (row counts, specific values, error states). Test edge cases (empty data, nulls, boundary values). Mock dependencies if possible.
+
+---
+
+**Question: What's the best way to debug a complex stored procedure?**
+**Answer:** Use PRINT statements or logging table to trace execution flow. Execute sections individually to isolate issues. Check intermediate result sets with SELECTs. Use SQL Server Profiler or Extended Events to capture actual statements. Verify parameter values match expectations.
+
+---
+
+**Question: How do you capture and analyze execution plans?**
+**Answer:** Use SET SHOWPLAN_XML ON for estimated plans, SET STATISTICS XML ON for actual plans. Enable "Include Actual Execution Plan" in SSMS (Ctrl+M). Look for warnings, expensive operations (scans, sorts, spools), cardinality mismatches. Use SQL Sentry Plan Explorer for analysis.
+
+---
+
+**Question: What should you check when a query suddenly becomes slow?**
+**Answer:** Compare execution plans before/after. Check for parameter sniffing (different parameter values). Verify statistics are up-to-date. Look for schema changes (new columns, dropped indexes). Check for implicit conversions. Review recent data volume changes. Monitor blocking/locks.
+
+---
+
+## Data Warehouse-Specific
+
+**Question: What is surrogate key generation best practice in a warehouse?**
+**Answer:** Use IDENTITY columns for simple sequential integers. Use SEQUENCE objects for cross-table coordination. Reserve negative values (-1, -2) for unknown/not applicable. Ensure uniqueness across all loads (handle duplicates). Consider BIGINT for very large tables.
+
+---
+
+**Question: How do you handle late-arriving facts in a data warehouse?**
+**Answer:** Load facts as they arrive using current dimension versions (not historical). Use "As-Is" approach rather than "As-Was". Document that analysis may differ from original transaction date perspective. Alternative: delay fact load until all dimension data available (not recommended).
+
+---
+
+**Question: What is a factless fact table and when do you use it?**
+**Answer:** Factless fact table records events without measures (just keys). Used for tracking occurrences: attendance (who attended what event), coverage (which products in which stores), or relationships. Enables many-to-many relationship analysis and event counting.
+
+---
+
+**Question: How do you design for both detailed and aggregated reporting needs?**
+**Answer:** Maintain detailed fact tables for drill-down. Create aggregated fact tables (daily, monthly) for performance. Use materialized views or indexed views for automatic aggregation. Document which tables to use for which reporting levels. Aggregate tables updated during ETL.
+
+---
+
+**Question: What is a consolidation table in data warehousing?**
+**Answer:** Consolidation table combines multiple fact tables with different grains into unified view for cross-process analysis. Usually implemented as view or stored procedure that union-alls facts with common dimensions. Enables single report across sales, inventory, financials.
+
+---
+
+## Import Instructions:
+1. Copy this content into a text file
+2. Use Anki's "Import" feature (File → Import)
+3. Set field separator as "**Answer:**" or configure appropriately
+4. Choose your deck and note type
+5. Import the flashcards

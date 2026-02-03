@@ -1,0 +1,403 @@
+# SQL Server Database Engineering Flashcards
+
+## Database Design & Architecture
+
+**Question: What are the three types of database files in SQL Server?**
+**Answer:**
+1. Primary data files (.mdf) - contains startup information and data
+2. Secondary data files (.ndf) - optional additional data files
+3. Transaction log files (.ldf) - contains transaction logs
+
+---
+
+**Question: What is the purpose of the transaction log in SQL Server?**
+**Answer:** The transaction log records all transactions and database modifications. It ensures ACID properties, enables rollback operations, point-in-time recovery, and database replication.
+
+---
+
+**Question: What are the normal forms in database design?**
+**Answer:** 
+1. 1NF - No repeating groups, atomic values
+2. 2NF - 1NF + no partial dependencies
+3. 3NF - 2NF + no transitive dependencies
+4. BCNF - Stronger version of 3NF
+
+---
+
+## Performance & Indexing
+
+**Question: What is the difference between clustered and non-clustered indexes?**
+**Answer:** 
+- Clustered: Sorts and stores data rows in table based on key values, one per table
+- Non-clustered: Contains index key values and pointers to actual data, multiple per table
+
+---
+
+**Question: What is index fragmentation and how does it affect performance?**
+**Answer:** Index fragmentation occurs when data modifications cause index pages to become out of order. It reduces query performance by increasing I/O operations and can be fixed with REBUILD or REORGANIZE operations.
+
+---
+
+**Question: What is the difference between INNER JOIN and LEFT JOIN?**
+**Answer:** 
+- INNER JOIN: Returns only matching rows from both tables
+- LEFT JOIN: Returns all rows from left table and matching rows from right table
+
+---
+
+## Backup & Recovery
+
+**Question: What are the three main recovery models in SQL Server?**
+**Answer:**
+1. Simple - minimal logging, no point-in-time recovery
+2. Full - complete logging, point-in-time recovery available
+3. Bulk-logged - minimal logging for bulk operations, point-in-time with limitations
+
+---
+
+**Question: What is the difference between FULL backup and DIFFERENTIAL backup?**
+**Answer:** 
+- FULL backup: Complete copy of entire database
+- DIFFERENTIAL backup: Only changes since last full backup
+
+---
+
+**Question: What is a Transaction Log backup and when is it required?**
+**Answer:** Transaction log backup records committed transactions since last log backup. Required for point-in-time recovery and only available in Full or Bulk-logged recovery models.
+
+---
+
+## Security & Permissions
+
+**Question: What are the three levels of security permissions in SQL Server?**
+**Answer:**
+1. Server level - server roles, logins
+2. Database level - database users, database roles
+3. Object level - permissions on specific tables, views, procedures
+
+---
+
+**Question: What is the difference between SQL Server Authentication and Windows Authentication?**
+**Answer:** 
+- SQL Server Authentication: Username/password stored in SQL Server
+- Windows Authentication: Uses Windows domain credentials, integrated security
+
+---
+
+**Question: What is the principle of least privilege in database security?**
+**Answer:** Grant users only the minimum permissions necessary to perform their job functions, reducing security risks and potential damage from compromised accounts.
+
+---
+
+## High Availability & Disaster Recovery
+
+**Question: What is SQL Server Always On Availability Groups?**
+**Answer:** High availability solution that provides database-level failover for multiple databases, supporting read-only secondary replicas and automatic failover.
+
+---
+
+**Question: What is the difference between Failover Cluster Instances and Availability Groups?**
+**Answer:** 
+- FCI: Instance-level protection, shared storage, fails over entire instance
+- AG: Database-level protection, doesn't require shared storage, more flexible
+
+---
+
+**Question: What is Database Mirroring and why was it deprecated?**
+**Answer:** Database Mirroring provided database-level high availability. Deprecated in favor of Availability Groups which offer better performance, multiple secondary replicas, and read access on secondaries.
+
+---
+
+## Monitoring & Maintenance
+
+**Question: What is DMF (Dynamic Management Function) vs DMV (Dynamic Management View)?**
+**Answer:** 
+- DMV: Returns table-like result sets (e.g., sys.dm_db_index_physical_stats)
+- DMF: Accepts parameters and returns single values (e.g., sys.dm_fts_index_keywords)
+
+---
+
+**Question: What are the key performance counters to monitor in SQL Server?**
+**Answer:** 
+- Buffer Manager: Page life expectancy, cache hit ratio
+- Memory Manager: Target vs Total server memory
+- General Statistics: Processes blocked, active transactions
+- Access Methods: Page splits, index scans vs seeks
+
+---
+
+**Question: What is the purpose of Database Consistency Checker (DBCC)?**
+**Answer:** DBCC commands check physical and logical consistency of database objects, including DBCC CHECKDB for integrity, DBCC CHECKALLOC for allocation, and DBCC CHECKCATALOG for system catalog consistency.
+
+---
+
+## Advanced Topics
+
+**Question: What is the difference between stored procedures and functions?**
+**Answer:** 
+- Procedures: Can modify data, return multiple result sets, use output parameters
+- Functions: Cannot modify data, return single value/table, must return value
+
+---
+
+**Question: What is query execution plan and why is it important?**
+**Answer:** Execution plan shows how SQL Server executes a query, including join methods, index usage, and data flow. Critical for performance tuning and understanding bottlenecks.
+
+---
+
+**Question: What is the purpose of the Query Optimizer?**
+**Answer:** Query Optimizer chooses the most efficient execution plan for a query based on statistics, indexes, and cost-based algorithms to minimize resource usage and execution time.
+
+---
+
+## Data Types & Constraints
+
+**Question: What is the difference between CHAR and VARCHAR data types?**
+**Answer:** 
+- CHAR: Fixed-length, pads with spaces, good for consistent length data
+- VARCHAR: Variable-length, stores only actual characters, saves space for varying lengths
+
+---
+
+**Question: What are the main types of constraints in SQL Server?**
+**Answer:** 
+- PRIMARY KEY - unique identifier
+- FOREIGN KEY - referential integrity
+- UNIQUE - unique values per column
+- CHECK - validates data conditions
+- DEFAULT - provides default values
+- NOT NULL - requires values
+
+---
+
+**Question: When should you use NVARCHAR instead of VARCHAR?**
+**Answer:** Use NVARCHAR when storing Unicode characters (international data) as it supports 2-byte characters. VARCHAR is more space-efficient for ASCII-only data.
+
+---
+
+## Partitioning & Scaling
+
+**Question: What is table partitioning and when should you use it?**
+**Answer:** Table partitioning divides large tables into smaller, manageable pieces based on key values. Use for very large tables (millions+ rows) to improve query performance and maintenance operations.
+
+---
+
+**Question: What is the difference between horizontal and vertical partitioning?**
+**Answer:** 
+- Horizontal: Splits rows across tables (based on criteria like date ranges)
+- Vertical: Splits columns across tables (separating frequently vs infrequently used data)
+
+---
+
+**Question: What is a covered index and how does it improve performance?**
+**Answer:** A covered index includes all columns needed for a query, allowing the query to be satisfied entirely from the index without accessing the base table, reducing I/O operations.
+
+---
+
+## Transactions & Concurrency
+
+**Question: What are the ACID properties in SQL Server?**
+**Answer:**
+- Atomicity: All or none of transaction completes
+- Consistency: Database remains in valid state
+- Isolation: Concurrent transactions don't interfere
+- Durability: Committed changes persist
+
+---
+
+**Question: What are the different isolation levels in SQL Server?**
+**Answer:** 
+- READ UNCOMMITTED: No shared locks, may read uncommitted data
+- READ COMMITTED: Cannot read uncommitted data (default)
+- REPEATABLE READ: Locks read data until transaction completes
+- SERIALIZABLE: Most restrictive, locks ranges of data
+
+---
+
+**Question: What is deadlock and how can you prevent it?**
+**Answer:** Deadlock occurs when two or more transactions block each other. Prevent by: consistent access order, keeping transactions short, using appropriate isolation levels, and implementing retry logic.
+
+---
+
+## XML & JSON
+
+**Question: How do you query XML data in SQL Server?**
+**Answer:** Use XQuery with methods like .value() to extract scalar values, .query() for XML fragments, and .exist() to check for nodes using XPath expressions.
+
+---
+
+**Question: What is the difference between OPENJSON and JSON_VALUE functions?**
+**Answer:** 
+- OPENJSON: Parses JSON array into table format, can handle complex structures
+- JSON_VALUE: Extracts single scalar value from JSON path
+
+---
+
+**Question: When would you use JSON data type vs XML in SQL Server?**
+**Answer:** Use JSON for modern applications, REST APIs, and simpler data structures. Use XML for legacy systems, complex hierarchical data, or when XQuery/XSLT processing is needed.
+
+---
+
+## Administration
+
+**Question: What is the purpose of SQL Server Agent?**
+**Answer:** SQL Server Agent automates administrative tasks, including job scheduling, alerts, and operators for routine maintenance, backups, and monitoring.
+
+---
+
+**Question: What is the difference between shrinking database and shrinking files?**
+**Answer:** 
+- Database shrink: Releases unused space from all files
+- File shrink: Targets specific data or log files, more controlled approach
+
+---
+
+**Question: What are the key files in a SQL Server database backup strategy?**
+**Answer:** 
+- Full backups: Complete database copies (weekly/bi-weekly)
+- Differential backups: Changes since last full (daily)
+- Transaction log backups: Changes since last log backup (hourly/frequent)
+
+---
+
+## Import/Export & ETL
+
+**Question: What is the difference between BCP and BULK INSERT?**
+**Answer:** 
+- BCP: Command-line utility for data import/export, works across networks
+- BULK INSERT: T-SQL command, runs within SQL Server, generally faster for local files
+
+---
+
+**Question: What is SSIS (SQL Server Integration Services) used for?**
+**Answer:** SSIS is an ETL tool for data integration, transformation, and migration between different data sources and destinations, including complex data workflows.
+
+---
+
+**Question: What are the three main components of SSIS packages?**
+**Answer:** 
+- Control Flow: Overall workflow and tasks
+- Data Flow: Data movement and transformation pipelines
+- Event Handlers: Responses to package events
+
+---
+
+## Error Handling
+
+**Question: What is the difference between RAISERROR and THROW in SQL Server?**
+**Answer:** 
+- RAISERROR: Legacy, more formatting options, can return custom error messages
+- THROW: Modern, simpler syntax, automatically includes error details, recommended for new code
+
+---
+
+**Question: What is TRY...CATCH block used for in SQL Server?**
+**Answer:** TRY...CATCH handles errors in T-SQL code, allowing graceful error handling, logging, and transaction rollback when errors occur.
+
+---
+
+**Question: What is the XACT_ABORT setting and why is it important?**
+**Answer:** XACT_ABORT determines whether SQL Server automatically rolls back transactions when runtime errors occur. When ON, most runtime errors cause transaction rollback, preventing inconsistent data states.
+
+---
+
+## Miscellaneous
+
+**Question: What is the difference between tempdb and user databases?**
+**Answer:** tempdb stores temporary objects, row versions, and internal objects. It's recreated on server restart, uses simple recovery model, and requires special performance considerations.
+
+---
+
+**Question: What are the different types of temporary tables in SQL Server?**
+**Answer:** 
+- Local temp tables (#table): Visible only to current session
+- Global temp tables (##table): Visible to all sessions
+- Table variables (@table): Scoped to batch/stored procedure
+
+---
+
+**Question: What is the purpose of the Plan Cache in SQL Server?**
+**Answer:** Plan cache stores execution plans to avoid recompilation. Improves performance by reusing optimized plans for identical queries but can cause parameter sniffing issues.
+
+---
+
+## Best Practices
+
+**Question: What are the best practices for writing efficient SQL queries?**
+**Answer:** 
+- Use appropriate indexes and avoid table scans
+- Select only needed columns (avoid SELECT *)
+- Use WHERE clauses to limit result sets
+- Avoid cursors when possible, use set-based operations
+- Use parameterized queries to prevent SQL injection
+
+---
+
+**Question: What are the best practices for database backup strategies?**
+**Answer:** 
+- Regular full backups with appropriate frequency
+- Differential backups between full backups
+- Frequent transaction log backups (in Full recovery)
+- Test restore procedures regularly
+- Store backups in multiple locations
+- Monitor backup job success
+
+---
+
+**Question: What are the best practices for index maintenance?**
+**Answer:** 
+- Regularly monitor fragmentation levels
+- Reorganize indexes with 5-30% fragmentation
+- Rebuild indexes with >30% fragmentation
+- Schedule maintenance during off-peak hours
+- Update statistics after index operations
+- Monitor unused indexes for removal
+
+---
+
+## Performance Tuning
+
+**Question: What is parameter sniffing and how does it affect performance?**
+**Answer:** Parameter sniffing occurs when SQL Server uses parameter values from first execution to create execution plan for subsequent executions, potentially causing poor performance for different parameter values.
+
+---
+
+**Question: What are missing index recommendations and how do you use them?**
+**Answer:** SQL Server provides missing index DMVs that suggest indexes that could improve query performance. Analyze recommendations carefully to avoid over-indexing.
+
+---
+
+**Question: What is the difference between covering index and included columns?**
+**Answer:** 
+- Covering index: All query columns are part of index key
+- Included columns: Non-key columns added to index leaf level, avoiding table lookups without affecting key structure
+
+---
+
+## Advanced Features
+
+**Question: What is Columnstore index and when should you use it?**
+**Answer:** Columnstore index stores data column-wise rather than row-wise, ideal for data warehousing and analytical queries on large datasets, providing high compression and query performance.
+
+---
+
+**Question: What is In-Memory OLTP (Hekaton) and its benefits?**
+**Answer:** In-Memory OLTP is a memory-optimized database engine providing extreme performance for transaction processing, eliminating locks and latches through optimistic concurrency.
+
+---
+
+**Question: What are the different types of statistics in SQL Server?**
+**Answer:** 
+- Single-column statistics on individual columns
+- Multi-column statistics on column combinations
+- Filtered statistics for subsets of data
+- Auto-created vs manually created statistics
+
+---
+
+Import Instructions:
+1. Copy this content into a text file
+2. Use Anki's "Import" feature (File → Import)
+3. Set field separator as "**Answer:**" or configure appropriately
+4. Choose your deck and note type
+5. Import the flashcards
