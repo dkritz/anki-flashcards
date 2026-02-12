@@ -1,0 +1,378 @@
+# T-SQL Keys Concepts and Use Cases Flashcards
+
+## Primary Keys
+
+**Question: What is a Primary Key and what are its two key characteristics?**
+**Answer:** A Primary Key is a column or set of columns that uniquely identifies each row in a table. Its two key characteristics are: 1) Uniqueness (no two rows can have the same value), 2) Non-nullability (cannot contain NULL values). Only one Primary Key is allowed per table.
+
+---
+
+**Question: Should you use a natural key or a surrogate key as a Primary Key?**
+**Answer:** Prefer surrogate keys (auto-incrementing integers, identity columns) over natural keys for Primary Keys. Surrogate keys are immutable, never change, are narrow (4-8 bytes), and don't carry business meaning. Natural keys (like SSN, email) can change and may not be unique or immutable.
+
+---
+
+**Question: What data type is best for a Primary Key in T-SQL?**
+**Answer:** Use INTEGER (INT) or BIGINT for surrogate keys with IDENTITY property. INT supports 2.1 billion rows, BIGINT supports 9.2 quintillion. Avoid GUIDs as clustered keys (cause fragmentation), VARCHAR (variable width slows joins), or composite keys (wide keys propagate to all indexes).
+
+---
+
+**Question: What happens when you define a Primary Key in SQL Server?**
+**Answer:** SQL Server automatically creates a Unique Clustered Index on the Primary Key column(s) (unless you specify NONCLUSTERED). This provides fast lookups and enforces uniqueness. The key columns cannot be NULL and duplicate values are rejected.
+
+---
+
+**Question: When would you use a composite Primary Key?**
+**Answer:** Use composite Primary Keys (multiple columns) for junction/link tables in many-to-many relationships where the combination uniquely identifies rows. Example: OrderDetails table with PK (OrderID, ProductID). Avoid for main entity tables - use surrogate key instead.
+
+---
+
+**Question: What is the syntax to create a Primary Key in T-SQL?**
+**Answer:** Inline: `CREATE TABLE Customers (CustomerID INT IDENTITY(1,1) PRIMARY KEY, Name VARCHAR(100))`. Constraint syntax: `CREATE TABLE Orders (OrderID INT, CustomerID INT, CONSTRAINT PK_Orders PRIMARY KEY (OrderID))`. Both create unique clustered index by default.
+
+---
+
+**Question: What is the difference between a Primary Key constraint and a Unique constraint?**
+**Answer:** Primary Key: Only one per table, cannot be NULL, creates clustered index by default. Unique constraint: Multiple allowed per table, allows one NULL value (SQL Server), creates non-clustered index by default. Use Unique constraints for alternate identifiers like email or SSN.
+
+---
+
+## Foreign Keys
+
+**Question: What is a Foreign Key and what is its purpose?**
+**Answer:** A Foreign Key is a column (or set of columns) in one table that references the Primary Key of another table. It establishes and enforces referential integrity between tables, ensuring relationships are valid and preventing orphaned records.
+
+---
+
+**Question: What happens when you try to delete a row that has Foreign Key references?**
+**Answer:** By default, SQL Server prevents deletion (RESTRICT/NO ACTION) and raises an error if child rows exist. You can specify ON DELETE CASCADE to automatically delete child rows, or ON DELETE SET NULL to set FK to NULL (if nullable). Always handle with care to avoid accidental data loss.
+
+---
+
+**Question: What is the syntax for creating a Foreign Key in T-SQL?**
+**Answer:** ```CREATE TABLE Orders (
+    OrderID INT PRIMARY KEY,
+    CustomerID INT,
+    CONSTRAINT FK_Orders_Customers 
+    FOREIGN KEY (CustomerID) 
+    REFERENCES Customers(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+)```
+
+---
+
+**Question: Can a Foreign Key reference a Unique constraint instead of a Primary Key?**
+**Answer:** Yes, Foreign Keys can reference any column with a Unique constraint or Primary Key, but not regular indexes. The referenced column must enforce uniqueness. However, best practice is to reference Primary Keys for clarity and consistency.
+
+---
+
+**Question: What are the performance implications of Foreign Keys?**
+**Answer:** Foreign Keys add overhead on INSERT, UPDATE, DELETE operations because SQL Server must verify the referenced value exists. However, they improve SELECT performance by enabling query optimizer to use better join strategies. Always index Foreign Key columns to speed up the validation lookups.
+
+---
+
+**Question: When should you NOT use Foreign Keys?**
+**Answer:** Avoid Foreign Keys in high-throughput OLTP systems where write performance is critical, during bulk data loads (disable constraints, then re-enable), across databases (not supported), or in ETL staging tables where data quality is validated separately. Most production systems should use them.
+
+---
+
+**Question: What is a self-referencing Foreign Key?**
+**Answer:** A Foreign Key in a table that references the Primary Key of the same table. Used for hierarchical data like org charts (EmployeeID reports to ManagerID), product categories (CategoryID has ParentCategoryID), or threaded comments. Requires nullable FK column to allow root-level nodes.
+
+---
+
+## Surrogate vs Natural Keys
+
+**Question: What is a Surrogate Key and what are its advantages?**
+**Answer:** A Surrogate Key is an artificial, system-generated identifier (like IDENTITY integer) with no business meaning. Advantages: immutable, never changes, narrow (fast joins), unique, simple, doesn't expose business data. Best choice for Primary Keys in data warehouses and OLTP systems.
+
+---
+
+**Question: What is a Natural Key and when might you use one?**
+**Answer:** A Natural Key is a business attribute that uniquely identifies an entity (like SSN, ISBN, email address). Use when: the key is truly immutable and unique, very stable over time, small in size, and clearly understood by users. Be cautious - natural keys often change and may not be unique.
+
+---
+
+**Question: What is a Smart Key and why should you avoid it?**
+**Answer:** A Smart Key embeds business meaning within the key value (e.g., ProductID = "ELEC-TV-001" where ELEC=category, TV=subcategory, 001=sequence). Avoid because business rules change, making the key format obsolete; also causes fragmentation when ranges are meaningful.
+
+---
+
+**Question: In a data warehouse, should dimension tables use Surrogate or Natural Keys?**
+**Answer:** Dimension tables should use Surrogate Keys as Primary Keys, even if Natural Keys exist. Reasons: 1) Handle Type 2 SCD (same natural key, different time periods), 2) Protect from source system changes, 3) Improve performance with narrow integer keys, 4) Handle late-arriving data.
+
+---
+
+**Question: What is the -1, -2, -3 convention in data warehouse dimension keys?**
+**Answer:** Reserve negative surrogate key values for special cases: -1 = "Unknown" (data loaded before dimension member exists), -2 = "Not Applicable" (attribute doesn't apply to this record), -3 = "Invalid" (data quality issue). Prevents NULL Foreign Keys in fact tables.
+
+---
+
+## Unique Keys
+
+**Question: What is a Unique constraint and when do you use it?**
+**Answer:** A Unique constraint ensures no duplicate values exist in a column or combination of columns. Use for alternate identifiers that must be unique but aren't the Primary Key (email, username, SSN, SKU). Unlike Primary Keys, Unique constraints allow one NULL value and don't identify rows.
+
+---
+
+**Question: Can you have multiple Unique constraints on a table?**
+**Answer:** Yes, you can have multiple Unique constraints on a table, but only one Primary Key. This allows enforcing uniqueness on several business attributes (email AND username AND employee_code) while maintaining a single Primary Key for relationships.
+
+---
+
+**Question: What is the difference between a Unique constraint and a Unique index?**
+**Answer:** Functionally identical for enforcing uniqueness. Unique constraint is a logical concept (business rule) and appears in constraints list. Unique index is a physical implementation detail. Create Unique constraint when it represents a business rule; use Unique index purely for performance or partial uniqueness.
+
+---
+
+**Question: How do you create a Unique constraint on multiple columns?**
+**Answer:** ```CREATE TABLE Users (
+    UserID INT PRIMARY KEY,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100),
+    CONSTRAINT UQ_Name UNIQUE (FirstName, LastName),
+    CONSTRAINT UQ_Email UNIQUE (Email)
+)```
+The combination of FirstName + LastName must be unique.
+
+---
+
+**Question: What is a filtered/partial Unique index and when is it useful?**
+**Answer:** A filtered Unique index enforces uniqueness only on a subset of rows. Useful for soft deletes: ```CREATE UNIQUE INDEX IX_Active_Email ON Users(Email) WHERE IsActive = 1```. Allows inactive users to have duplicate emails, but active users must have unique emails.
+
+---
+
+## Candidate and Alternate Keys
+
+**Question: What is a Candidate Key?**
+**Answer:** A Candidate Key is any column or combination of columns that could uniquely identify rows and serve as a Primary Key. A table may have multiple Candidate Keys. You choose one as the Primary Key; the others become Alternate Keys and should have Unique constraints.
+
+---
+
+**Question: What is an Alternate Key?**
+**Answer:** An Alternate Key is a Candidate Key that was not chosen as the Primary Key. It could have been the Primary Key but another key was selected instead. Alternate Keys should have Unique constraints to enforce their uniqueness. Example: EmployeeID (PK) vs SSN (Alternate Key).
+
+---
+
+**Question: How do you identify Candidate Keys when designing a table?**
+**Answer:** Look for columns that: 1) Are never NULL, 2) Are unique across all rows, 3) Are immutable or rarely change, 4) Are minimal (no subset is also unique). Common candidates: ID numbers, email addresses, usernames, account numbers. Evaluate stability and choose the best as Primary Key.
+
+---
+
+## Composite Keys
+
+**Question: What is a Composite Key and when should you use one?**
+**Answer:** A Composite Key (or Compound Key) consists of two or more columns that together uniquely identify a row. Use for: junction tables in many-to-many relationships, weak entities where single columns aren't unique, or when business logic requires multiple attributes for uniqueness.
+
+---
+
+**Question: What are the downsides of Composite Keys?**
+**Answer:** 1) Wide keys propagate to Foreign Keys (wider indexes, slower joins), 2) More complex to join (multiple columns), 3) Harder to write queries, 4) Can cause performance issues with many columns, 5) Complicates ORM mapping. Prefer single-column surrogate keys for main entity tables.
+
+---
+
+**Question: What is the maximum number of columns in a Composite Key?**
+**Answer:** SQL Server allows up to 16 columns in a Composite Key, and the total key length cannot exceed 900 bytes. However, practical limit is much lower - keep composite keys under 4 columns and narrow for performance. Wide keys slow down all related indexes.
+
+---
+
+**Question: How do you reference a Composite Key in a Foreign Key?**
+**Answer:** The Foreign Key must include all columns of the Composite Key in the same order: ```CREATE TABLE OrderDetails (
+    OrderID INT,
+    ProductID INT,
+    Quantity INT,
+    CONSTRAINT PK_OrderDetails PRIMARY KEY (OrderID, ProductID),
+    CONSTRAINT FK_OrderDetails_Orders 
+    FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+)```
+
+---
+
+## Indexing and Performance
+
+**Question: Should Foreign Key columns be indexed?**
+**Answer:** Yes, always index Foreign Key columns. Without indexes, DELETE and UPDATE operations on the parent table require full table scans of the child table to check for references. Also speeds up JOIN operations. Use non-clustered indexes on FK columns.
+
+---
+
+**Question: What is the impact of wide Primary Keys on performance?**
+**Answer:** Wide Primary Keys (GUIDs, composite keys, long strings) propagate to all non-clustered indexes as the row locator, increasing index size, slowing down queries, and consuming more memory and disk space. Narrow integer keys (4 bytes) are optimal for performance.
+
+---
+
+**Question: What is index fragmentation and how do keys affect it?**
+**Answer:** Fragmentation occurs when data pages are out of order. Random keys (GUIDs, non-sequential values) cause page splits and high fragmentation. Sequential keys (IDENTITY, SEQUENTIALID) minimize fragmentation by inserting at the end of the index. Fragmentation degrades query performance.
+
+---
+
+**Question: Why are GUIDs problematic as Primary Keys?**
+**Answer:** GUIDs (UNIQUEIDENTIFIER) are 16 bytes (4x larger than INT), random values cause severe index fragmentation, take more space in indexes, slow down joins, and are hard for humans to read. If you must use GUIDs, use NEWSEQUENTIALID() instead of NEWID() to reduce fragmentation.
+
+---
+
+**Question: What is the difference between Clustered and Non-Clustered indexes on keys?**
+**Answer:** Clustered index (usually Primary Key) determines physical row order - only one per table. Non-clustered index is a separate structure with key values and row locators - multiple allowed. Primary Key defaults to clustered; Foreign Keys and Unique constraints default to non-clustered.
+
+---
+
+## Design Patterns and Best Practices
+
+**Question: What is the Entity-Attribute-Value (EAV) pattern and what are its key challenges?**
+**Answer:** EAV stores sparse attributes as rows (EntityID, AttributeName, Value) instead of columns. Challenges: no type safety, difficult to enforce constraints, complex queries requiring pivots, poor performance, hard to maintain. Avoid unless absolutely necessary for truly dynamic schemas.
+
+---
+
+**Question: Should dimension tables in a star schema use the source system's Primary Key?**
+**Answer:** No, dimension tables should use surrogate keys (IDENTITY) rather than source system keys. Source keys may change, aren't always unique across sources, and don't support Type 2 SCD. Keep source key as a natural key column with Unique constraint for reference.
+
+---
+
+**Question: What is a superkey and how is it different from a Candidate Key?**
+**Answer:** A superkey is any set of columns that uniquely identifies rows (may include extra columns). A Candidate Key is a minimal superkey - no proper subset is also a superkey. Example: (EmployeeID) is both; (EmployeeID, Name) is a superkey but not a Candidate Key because Name is redundant.
+
+---
+
+**Question: How do you handle NULL values in Unique constraints?**
+**Answer:** SQL Server allows one NULL value in a Unique constraint (NULL != NULL in comparisons). If you need to prevent NULLs entirely, add a NOT NULL constraint. If you need to allow multiple NULLs but enforce uniqueness on non-NULL values, use a filtered unique index: `WHERE Column IS NOT NULL`.
+
+---
+
+**Question: What is a covering index and how do keys relate to it?**
+**Answer:** A covering index includes all columns needed for a query, avoiding lookups to the base table. Keys (Primary, Foreign, Unique) often form the basis of covering indexes. Include additional columns using INCLUDE clause to cover queries without enlarging the key structure.
+
+---
+
+**Question: In a Type 2 SCD dimension, what is the Primary Key vs the Business Key?**
+**Answer:** Primary Key is the surrogate key (auto-incrementing integer, unique per row). Business Key (Natural Key) is the source system identifier that may appear in multiple rows (different versions). Example: CustomerSK (PK, unique) vs CustomerID (BK, same customer, multiple time periods).
+
+---
+
+**Question: What is an identifying vs non-identifying relationship?**
+**Answer:** Identifying: Child table's Primary Key includes the Foreign Key (strong dependency, child can't exist without parent). Non-identifying: Child has its own Primary Key separate from Foreign Key (weaker relationship). Identifying relationships create composite keys; non-identifying use surrogate keys.
+
+---
+
+## Common Mistakes and Anti-patterns
+
+**Question: What is wrong with using a timestamp or date as part of a Primary Key?**
+**Answer:** Timestamps can cause collisions (same millisecond) and make inserts non-deterministic. They create fragmentation as data isn't inserted sequentially by time. Complicates joins and updates. Use separate IDENTITY column for PK; add timestamp column for ordering/auditing with non-clustered index.
+
+---
+
+**Question: Why shouldn't you use meaningful values in Primary Keys?**
+**Answer:** Meaningful values (department codes, product categories) encode business rules that change over time. When the business rule changes, the key becomes obsolete or requires updating all related tables. Use surrogate keys for immutability; store business attributes in separate columns.
+
+---
+
+**Question: What is the "God Table" anti-pattern and how do keys relate to it?**
+**Answer:** A God Table combines many entities into one wide table with sparse columns and many nullable Foreign Keys. Leads to confusion about what the Primary Key represents, complex NULL handling, poor performance, and maintenance nightmares. Normalize into separate tables with clear Primary Keys.
+
+---
+
+**Question: What happens if you don't define a Primary Key?**
+**Answer:** Tables without Primary Keys: allow duplicate rows, make updates/deletes ambiguous (which row?), can't be referenced by Foreign Keys, cause performance issues (no clustered index by default), complicate ORM mapping, and make replication difficult. Always define a Primary Key.
+
+---
+
+**Question: Why is reusing Primary Key values dangerous?**
+**Answer:** Reusing deleted Primary Key values causes confusion with historical data, breaks audit trails, corrupts relationships if old references still exist, and confuses users. Once a key is assigned, it should never be reused even if the row is deleted. Use IDENTITY to ensure uniqueness.
+
+---
+
+## Advanced Concepts
+
+**Question: What is a Sequence object and when should you use it instead of IDENTITY?**
+**Answer:** A Sequence is a database object that generates sequential numbers across multiple tables. Use instead of IDENTITY when: you need the same number series across tables, need to access the next value before inserting, or need to restart/alter the sequence. More flexible than IDENTITY.
+
+---
+
+**Question: How do you implement a multi-tenant database with keys?**
+**Answer:** Add TenantID to all tables as part of Composite Primary Keys or include in all Foreign Key relationships. Alternatively, use separate schemas or databases per tenant. Ensure queries filter by TenantID; consider row-level security for additional protection. Never rely solely on application filtering.
+
+---
+
+**Question: What is a heap table and when might you not want a Primary Key?**
+**Answer:** A heap table has no clustered index (no Primary Key). Might be used for staging tables, ETL loads, or temporary data where you need fast inserts without overhead of maintaining indexes. However, heaps perform poorly for most queries. Add Primary Key before moving to production.
+
+---
+
+**Question: What is the difference between PRIMARY KEY, UNIQUE, and CHECK constraints?**
+**Answer:** PRIMARY KEY enforces uniqueness and NOT NULL (row identifier). UNIQUE enforces uniqueness but allows one NULL (alternate identifier). CHECK enforces data validation rules (domain integrity, e.g., Age > 0). All can be trusted by query optimizer but serve different purposes.
+
+---
+
+**Question: How do you find tables without Primary Keys in a database?**
+**Answer:** ```SELECT t.name AS TableName
+FROM sys.tables t
+LEFT JOIN sys.indexes i ON t.object_id = i.object_id AND i.is_primary_key = 1
+WHERE i.object_id IS NULL AND t.is_ms_shipped = 0
+ORDER BY t.name```
+This query identifies tables missing Primary Keys for cleanup.
+
+---
+
+**Question: What is a duplicate key violation error and how do you handle it?**
+**Answer:** Error 2627 or 2601 occurs when inserting/updating violates a Primary Key or Unique constraint. Handle by: checking for existence first, using MERGE statement for upserts, catching error in TRY/CATCH block, or implementing optimistic concurrency with rowversion columns.
+
+---
+
+## Practical Use Cases
+
+**Question: Design a user registration system with email uniqueness. What keys do you use?**
+**Answer:** UserID INT IDENTITY PRIMARY KEY (surrogate for relationships), Email VARCHAR(255) UNIQUE NOT NULL (prevents duplicates), Username VARCHAR(50) UNIQUE (alternate login). Use UserID in all Foreign Keys (narrow, fast). Email gets non-clustered unique index.
+
+---
+
+**Question: How would you model a product catalog with categories and subcategories using keys?**
+**Answer:** Products: ProductID (PK, surrogate), SKU (Unique, natural key). Categories: CategoryID (PK), ParentCategoryID (FK to Categories, self-referencing, nullable for root). ProductCategories junction: ProductID + CategoryID (Composite PK, FKs to both tables).
+
+---
+
+**Question: Design keys for an order system with order items. What relationships do you define?**
+**Answer:** Orders: OrderID (PK, surrogate), CustomerID (FK to Customers). OrderItems: OrderItemID (PK, surrogate), OrderID (FK), ProductID (FK), or use Composite PK (OrderID, ProductID) if quantity per product per order. Prefer separate surrogate key for flexibility.
+
+---
+
+**Question: How do you model an employee org chart with self-referencing relationships?**
+**Answer:** Employees: EmployeeID (PK), ManagerID (FK to Employees.EmployeeID, NULL for CEO). This creates a hierarchical tree structure. Use recursive CTEs to traverse. Consider adding HierarchyID or Materialized Path columns for performance if tree is large.
+
+---
+
+**Question: What key strategy works best for a slowly changing dimension Type 2?**
+**Answer:** Use surrogate key (CustomerSK) as Primary Key, natural key (CustomerID) as business key with effective date range (StartDate, EndDate) and IsCurrent flag. This allows tracking historical versions of the same customer. Fact tables join on CustomerSK.
+
+---
+
+**Question: How would you handle a social media "follows" relationship with keys?**
+**Answer:** Follows table with Composite Primary Key (FollowerID, FollowingID), both Foreign Keys to Users table. This prevents duplicate follows and ensures both users exist. Include CreatedDate for timestamp. Cannot use single surrogate key because the relationship itself is the entity.
+
+---
+
+**Question: Design a tagging system where articles can have multiple tags. What keys are needed?**
+**Answer:** Tags: TagID (PK), TagName (Unique). Articles: ArticleID (PK). ArticleTags junction table: ArticleID + TagID (Composite PK, FKs to both). Junction tables should use Composite Keys since the combination is unique and both columns are Foreign Keys.
+
+---
+
+**Question: What key design supports a shopping cart with multiple items that can be updated?**
+**Answer:** Carts: CartID (PK, could use SessionID or CustomerID). CartItems: CartItemID (PK), CartID (FK), ProductID (FK), Quantity. Or use Composite Key (CartID, ProductID) with logic to update quantity if product already in cart. Surrogate key allows easier updates and tracking.
+
+---
+
+**Question: How do you handle versioning of documents with keys?**
+**Answer:** Documents: DocumentID (surrogate PK, represents the document series), VersionNumber (part of Composite PK with DocumentID), Content, CreatedDate. Each version is a new row. Current version can be identified with IsLatest flag or MAX(VersionNumber) per DocumentID.
+
+---
+
+**Question: Design keys for a time-tracking system with projects, tasks, and time entries.**
+**Answer:** Projects: ProjectID (PK). Tasks: TaskID (PK), ProjectID (FK). TimeEntries: TimeEntryID (PK), TaskID (FK), UserID (FK), StartTime, EndTime. Use surrogate keys throughout for flexibility. Consider adding constraints to prevent overlapping time entries for same user.
+
+---
+
+Import Instructions:
+1. Copy this content into a text file
+2. Use Anki's "Import" feature (File → Import)
+3. Set field separator as "**Answer:**" or configure appropriately
+4. Choose your deck and note type
+5. Import the flashcards
