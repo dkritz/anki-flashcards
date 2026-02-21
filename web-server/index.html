@@ -3,14 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Flashcards</title>
+    <title>Flashcards - Spaced Repetition</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,239 +15,61 @@
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
         }
-
-        .header {
-            padding: 15px;
-            text-align: center;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .deck-selector {
-            padding: 10px 15px;
-            font-size: 16px;
-            border: none;
-            border-radius: 25px;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-            cursor: pointer;
-            outline: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            min-width: 200px;
-            -webkit-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 16px;
-        }
-
-        .progress-container {
-            padding: 10px 20px;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
-            transition: width 0.3s ease;
-            border-radius: 4px;
-        }
-
-        .progress-text {
-            text-align: center;
-            color: white;
-            font-size: 14px;
-            margin-top: 8px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .card-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            perspective: 1000px;
-            touch-action: pan-y;
-        }
-
-        .card {
-            width: 100%;
-            max-width: 400px;
-            min-height: 300px;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1), margin 0.3s ease;
-            cursor: pointer;
-        }
-
-        .card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card.swiping-left {
-            margin-left: -50px;
-            opacity: 0.5;
-        }
-
-        .card.swiping-right {
-            margin-left: 50px;
-            opacity: 0.5;
-        }
-
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 20px;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            background: white;
-        }
-
-        .card-front {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
-            color: #333;
-        }
-
-        .card-back {
-            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
-            color: #333;
-            transform: rotateY(180deg);
-        }
-
-        .card-label {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-            opacity: 0.7;
-            font-weight: 600;
-        }
-
-        .card-content {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            max-width: 100%;
-        }
-
-        .card-content pre {
-            background: #f4f4f4;
-            padding: 10px;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-size: 0.9rem;
-            text-align: left;
-            margin: 10px 0;
-        }
-
-        .card-content code {
-            background: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-        }
-
-        .controls {
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .btn {
-            width: 60px;
-            height: 60px;
-            border: none;
-            border-radius: 50%;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-prev {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-        }
-
-        .btn-next {
-            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: scale(1.1);
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .instructions {
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            padding: 10px 20px 20px;
-            font-size: 14px;
-        }
-
-        .empty-state {
-            text-align: center;
-            color: white;
-            padding: 40px;
-        }
-
-        .empty-state h2 {
-            margin-bottom: 10px;
-        }
-
+        .header { padding: 15px; text-align: center; color: white; position: relative; }
+        .header h1 { font-size: 1.5rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .mode-toggle { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        .mode-btn { padding: 8px 16px; border: 2px solid white; background: transparent; color: white; border-radius: 20px; cursor: pointer; font-size: 14px; transition: all 0.3s ease; }
+        .mode-btn.active { background: white; color: #667eea; }
+        .stats-bar { display: flex; justify-content: center; gap: 20px; padding: 10px; color: white; font-size: 14px; }
+        .stat-item { text-align: center; }
+        .stat-value { font-size: 1.5rem; font-weight: bold; display: block; }
+        .stat-label { font-size: 0.75rem; opacity: 0.9; }
+        .deck-selector { padding: 10px 15px; font-size: 16px; border: none; border-radius: 25px; background: rgba(255, 255, 255, 0.9); color: #333; cursor: pointer; outline: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); min-width: 200px; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
+        .progress-container { padding: 10px 20px; }
+        .progress-bar { height: 8px; background: rgba(255, 255, 255, 0.3); border-radius: 4px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%); transition: width 0.3s ease; border-radius: 4px; }
+        .progress-text { text-align: center; color: white; font-size: 14px; margin-top: 8px; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+        .card-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; perspective: 1000px; touch-action: pan-y; }
+        .card { width: 100%; max-width: 400px; min-height: 300px; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1), margin 0.3s ease; cursor: pointer; }
+        .card.flipped { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; padding: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); background: white; }
+        .card-front { background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%); color: #333; }
+        .card-back { background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); color: #333; transform: rotateY(180deg); }
+        .card-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; opacity: 0.7; font-weight: 600; }
+        .card-content { font-size: 1.1rem; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word; max-width: 100%; }
+        .card-content strong { color: #764ba2; }
+        .card-content code { background: #f4f4f4; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.9em; }
+        .difficulty-buttons { display: none; justify-content: center; gap: 10px; padding: 15px 20px; flex-wrap: wrap; }
+        .difficulty-buttons.visible { display: flex; }
+        .diff-btn { padding: 12px 20px; border: none; border-radius: 25px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); min-width: 80px; }
+        .diff-btn:hover { transform: scale(1.05); }
+        .diff-btn-again { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%); color: white; }
+        .diff-btn-hard { background: linear-gradient(135deg, #feca57 0%, #ff9f43 100%); color: #333; }
+        .diff-btn-good { background: linear-gradient(135deg, #48dbfb 0%, #0abde3 100%); color: white; }
+        .diff-btn-easy { background: linear-gradient(135deg, #1dd1a1 0%, #10ac84 100%); color: white; }
+        .diff-btn .interval { display: block; font-size: 10px; font-weight: normal; opacity: 0.9; margin-top: 2px; }
+        .controls { padding: 20px; display: flex; justify-content: center; gap: 20px; }
+        .controls.hidden { display: none; }
+        .btn { width: 60px; height: 60px; border: none; border-radius: 50%; font-size: 24px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; -webkit-tap-highlight-color: transparent; }
+        .btn-prev { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+        .btn-next { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; }
+        .instructions { text-align: center; color: rgba(255, 255, 255, 0.8); padding: 10px 20px 20px; font-size: 14px; }
+        .instructions.hidden { display: none; }
+        .completion-message { text-align: center; color: white; padding: 40px 20px; }
+        .completion-message h2 { font-size: 2rem; margin-bottom: 15px; }
+        .completion-message p { font-size: 1.1rem; margin-bottom: 20px; opacity: 0.9; }
+        .completion-message .btn-restart { padding: 15px 30px; background: white; color: #667eea; border: none; border-radius: 25px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        .completion-message .btn-restart:hover { transform: scale(1.05); }
+        .reset-btn { position: absolute; top: 15px; left: 15px; padding: 8px 12px; background: rgba(255,255,255,0.2); border: 1px solid white; color: white; border-radius: 15px; font-size: 12px; cursor: pointer; transition: all 0.3s ease; }
+        .reset-btn:hover { background: rgba(255,255,255,0.3); }
+        .loading { display: flex; justify-content: center; align-items: center; height: 100vh; color: white; font-size: 1.2rem; }
         @media (max-width: 480px) {
-            .card {
-                min-height: 250px;
-            }
-            
-            .card-content {
-                font-size: 1rem;
-            }
-
-            .header h1 {
-                font-size: 1.3rem;
-            }
-        }
-
-        .loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: white;
-            font-size: 1.2rem;
+            .card { min-height: 250px; }
+            .card-content { font-size: 1rem; }
+            .header h1 { font-size: 1.3rem; }
+            .diff-btn { padding: 10px 15px; font-size: 12px; min-width: 70px; }
+            .stats-bar { gap: 15px; font-size: 12px; }
+            .stat-value { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -260,7 +77,29 @@
     <div class="loading" id="loading">Loading flashcards...</div>
     
     <div class="header" id="header" style="display: none;">
+        <button class="reset-btn" id="resetBtn" onclick="resetProgress()">Reset Progress</button>
         <h1>Study Flashcards</h1>
+        
+        <div class="mode-toggle">
+            <button class="mode-btn active" id="reviewModeBtn" onclick="setMode('review')">Review (SRS)</button>
+            <button class="mode-btn" id="studyModeBtn" onclick="setMode('study')">Study All</button>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-item">
+                <span class="stat-value" id="dueCount">0</span>
+                <span class="stat-label">Due Now</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="newCount">0</span>
+                <span class="stat-label">New</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="learnedCount">0</span>
+                <span class="stat-label">Learned</span>
+            </div>
+        </div>
+
         <select class="deck-selector" id="deckSelector">
             <option value="sql-data-engineering">SQL Data Engineering</option>
             <option value="sql-server-dba">SQL Server DBA</option>
@@ -290,236 +129,290 @@
         </div>
     </div>
 
-    <div class="controls" id="controls" style="display: none;">
+    <div class="completion-message" id="completionMessage" style="display: none;">
+        <h2>🎉 All Caught Up!</h2>
+        <p>You've reviewed all due cards for this deck.</p>
+        <p id="nextReviewInfo"></p>
+        <button class="btn-restart" onclick="loadDeck(currentDeckKey)">Continue Studying</button>
+    </div>
+
+    <div class="controls" id="controls">
         <button class="btn btn-prev" id="prevBtn">&larr;</button>
         <button class="btn btn-next" id="nextBtn">&rarr;</button>
     </div>
 
-    <div class="instructions" id="instructions" style="display: none;">
-        Tap card to flip &bull; Swipe to navigate
+    <div class="difficulty-buttons" id="difficultyButtons">
+        <button class="diff-btn diff-btn-again" onclick="rateCard('again')">Again<span class="interval">&lt; 1m</span></button>
+        <button class="diff-btn diff-btn-hard" onclick="rateCard('hard')">Hard<span class="interval" id="hardInterval">1d</span></button>
+        <button class="diff-btn diff-btn-good" onclick="rateCard('good')">Good<span class="interval" id="goodInterval">2d</span></button>
+        <button class="diff-btn diff-btn-easy" onclick="rateCard('easy')">Easy<span class="interval" id="easyInterval">4d</span></button>
     </div>
+
+    <div class="instructions" id="instructions">Tap card to flip • Swipe to navigate</div>
 
     <script>
         const decks = {
             'sql-data-engineering': [
-                { question: 'What is a **Data Warehouse**?', answer: 'A central repository of integrated data from multiple sources, optimized for reporting and analysis. It stores historical data and uses dimensional modeling with star/snowflake schemas.' },
-                { question: 'What is **ETL**?', answer: 'Extract, Transform, Load - the process of extracting data from source systems, transforming it (cleaning, aggregating, validating), and loading it into a target database or data warehouse.' },
-                { question: 'What is **ELT**?', answer: 'Extract, Load, Transform - data is first loaded into the target system (often a cloud data warehouse), then transformed using the target systems processing power. Better for large volumes and modern cloud platforms.' },
-                { question: 'What is **Dimensional Modeling**?', answer: 'A design technique for databases optimized for data warehousing. Uses facts (measurements/metrics) and dimensions (context/descriptive attributes). Common schemas: Star and Snowflake.' },
-                { question: 'What is a **Fact Table**?', answer: 'Contains quantitative data (facts/measurements) for analysis. Usually numeric and additive (e.g., sales amount, quantity). Has foreign keys to dimension tables.' },
-                { question: 'What is a **Dimension Table**?', answer: 'Contains descriptive attributes providing context to facts (e.g., date, customer, product details). Used for filtering, grouping, and labeling in reports.' },
-                { question: 'What is a **Star Schema**?', answer: 'A dimensional model with a central fact table surrounded by denormalized dimension tables. Simple, fast queries, easy to understand.' },
-                { question: 'What is a **Snowflake Schema**?', answer: 'A dimensional model where dimension tables are normalized into multiple related tables. More storage-efficient but requires more joins, more complex queries.' },
-                { question: 'What is **CDC (Change Data Capture)**?', answer: 'A technique to identify and capture changes made to data in a database. Used to track inserts, updates, and deletes for synchronization and auditing.' },
-                { question: 'What is **Data Lineage**?', answer: 'The complete lifecycle of data: origin, transformations, and where it moves over time. Critical for compliance, debugging, and understanding data dependencies.' }
+                { q: 'What is a **Data Warehouse**?', a: 'A central repository of integrated data from multiple sources, optimized for reporting and analysis.' },
+                { q: 'What is **ETL**?', a: 'Extract, Transform, Load - extracting data, transforming it, and loading into target database.' },
+                { q: 'What is **Dimensional Modeling**?', a: 'Design technique using facts (metrics) and dimensions (context) for data warehousing.' },
+                { q: 'What is a **Star Schema**?', a: 'Dimensional model with central fact table surrounded by denormalized dimension tables.' },
+                { q: 'What is a **Fact Table**?', a: 'Contains quantitative data (facts/measurements) for analysis.' },
+                { q: 'What is **CDC**?', a: 'Change Data Capture - identifies and captures changes made to data.' }
             ],
             'sql-server-dba': [
-                { question: 'What are **SQL Server Recovery Models**?', answer: 'Full: Full logging, point-in-time recovery. Bulk-Logged: Minimal logging for bulk operations. Simple: Minimal logging, auto-truncates log, no point-in-time recovery.' },
-                { question: 'What is **Transaction Log Shipping**?', answer: 'High availability/disaster recovery solution that automatically sends transaction log backups from primary to secondary servers. Secondary databases can be in standby or no-recovery mode.' },
-                { question: 'What is **Database Mirroring**?', answer: 'Deprecated HA feature maintaining two copies of a database (principal and mirror) across servers. Supports automatic failover with witness server. Replaced by Always On.' },
-                { question: 'What is **Always On Availability Groups**?', answer: 'Enterprise HA/DR solution supporting multiple secondary replicas. Provides automatic failover, read-only secondaries, and backup on secondaries. Requires Windows Server Failover Clustering.' },
-                { question: 'What is a **Deadlock**?', answer: 'When two or more transactions block each other by holding locks on resources the others need. SQL Server detects and terminates one as deadlock victim (error 1205).' },
-                { question: 'How do you **troubleshoot slow queries**?', answer: 'Use execution plans, check for missing indexes, update statistics, analyze waits, review query structure, check for parameter sniffing, monitor blocking chains.' },
-                { question: 'What is **Parameter Sniffing**?', answer: 'When SQL Server optimizes a query based on the first execution parameters. Can cause poor performance for subsequent executions with different parameter values.' },
-                { question: 'What is **Fragmentation** and how to fix it?', answer: 'Logical fragmentation occurs when index pages are out of order. Rebuild index (offline/online) for >30% fragmentation, reorganize for 5-30%, <5% do nothing.' },
-                { question: 'What are **TempDB best practices**?', answer: 'Use multiple data files (1 per core up to 8), pre-size to avoid auto-growth, put on fast storage, use trace flags 1117/1118 for uniform extent allocation.' },
-                { question: 'What is **Backup Strategy**?', answer: 'Full backups periodically, differential backups for faster recovery, transaction log backups for point-in-time recovery. Test restores regularly (backup verification).' }
+                { q: 'What are **SQL Server Recovery Models**?', a: 'Full, Bulk-Logged, and Simple.' },
+                { q: 'What is a **Deadlock**?', a: 'When two transactions block each other by holding locks on resources.' },
+                { q: 'What is **Always On**?', a: 'Enterprise HA/DR solution supporting multiple secondary replicas.' }
             ],
             'tsql-keys': [
-                { question: 'What is a **Primary Key**?', answer: 'Uniquely identifies each row in a table. Cannot contain NULL values. A table can have only one primary key, which may consist of single or multiple columns (composite key).' },
-                { question: 'What is a **Foreign Key**?', answer: 'Establishes a link between two tables. Ensures referential integrity by preventing actions that would destroy links between tables. Values must match primary key in referenced table or be NULL.' },
-                { question: 'What is a **Unique Key**?', answer: 'Ensures all values in a column are different. Unlike primary key, allows one NULL value. A table can have multiple unique constraints.' },
-                { question: 'What is a **Composite Key**?', answer: 'A key that consists of two or more columns used together to uniquely identify a record. Both primary and unique keys can be composite.' },
-                { question: 'What is the difference between **Primary Key and Unique Key**?', answer: 'PK: No NULLs allowed, only one per table, creates clustered index by default. UK: Allows one NULL, multiple allowed per table, creates non-clustered index by default.' },
-                { question: 'What is **Referential Integrity**?', answer: 'Ensures relationships between tables remain consistent. Enforced by foreign keys with actions: CASCADE (delete/update), SET NULL, SET DEFAULT, NO ACTION.' },
-                { question: 'What is a **Candidate Key**?', answer: 'A column or set of columns that can uniquely identify a row. A table may have multiple candidate keys, but only one is chosen as the primary key.' },
-                { question: 'What is an **Alternate Key**?', answer: 'Any candidate key that is not chosen as the primary key. Can have unique constraints placed on them.' },
-                { question: 'What is **ON DELETE CASCADE**?', answer: 'When a row in the parent table is deleted, all related rows in the child table are automatically deleted. Use with caution as it can cause unintended data loss.' },
-                { question: 'Can a Foreign Key reference a **Unique Constraint**?', answer: 'Yes, a foreign key can reference either a primary key or a unique constraint (alternate key) in the referenced table.' }
+                { q: 'What is a **Primary Key**?', a: 'Uniquely identifies each row. Cannot contain NULL values.' },
+                { q: 'What is a **Foreign Key**?', a: 'Establishes a link between two tables ensuring referential integrity.' },
+                { q: 'What is **Referential Integrity**?', a: 'Ensures relationships between tables remain consistent.' }
             ],
             'music-theory': [
-                { question: 'What are the 12 notes in Western music (chromatic scale)?', answer: 'C, C#/Db, D, D#/Eb, E, F, F#/Gb, G, G#/Ab, A, A#/Bb, B. The sharp (#) raises a note by a half step; flat (b) lowers by a half step. Enharmonic equivalents (like C# and Db) are the same pitch but named differently depending on the key.' },
-                { question: 'What is the formula for a major scale?', answer: 'Whole-Whole-Half-Whole-Whole-Whole-Half (W-W-H-W-W-W-H). For example, C major: C (W) D (W) E (H) F (W) G (W) A (W) B (H) C. This creates the characteristic "do-re-mi-fa-sol-la-ti-do" sound.' },
-                { question: 'What notes make up a C major triad?', answer: 'C - E - G. Root (C) + Major Third (E) + Perfect Fifth (G). These are the 1st, 3rd, and 5th notes of the C major scale. Happy, stable sound.' },
-                { question: 'What is the formula for building a minor triad?', answer: 'Root + Minor Third (3 half steps up) + Perfect Fifth (7 half steps up from root). For example, A minor: A (root) + C (minor 3rd) + E (perfect 5th). The minor third gives it a sad, dark sound.' },
-                { question: 'What is a perfect fifth interval?', answer: 'Seven half steps. For example, C to G. Called a "perfect fifth" or "P5". Very stable, consonant sound. First two notes of "Twinkle Twinkle Little Star." Power chords are built from root + perfect fifth.' },
-                { question: 'What is a tritone interval?', answer: 'Six half steps (three whole steps). Also called augmented fourth or diminished fifth. For example, C to F# or C to Gb. Very dissonant, unstable sound. Called "the devil in music" in medieval times.' },
-                { question: 'What notes make up a C dominant 7 chord?', answer: 'C - E - G - Bb. Root + Major Third + Perfect Fifth + Minor Seventh (10 half steps from root). Also written as C7. Bluesy, tense sound. Wants to resolve to F major.' },
-                { question: 'What is the order of sharps in key signatures?', answer: 'F# - C# - G# - D# - A# - E# - B#. Mnemonic: "Father Charles Goes Down And Ends Battle" or "Fat Cats Go Down Alleys Eating Birds." Each new sharp adds a fifth up from the previous.' },
-                { question: 'What is the I - V - vi - IV chord progression?', answer: 'The "Axis of Awesome" or "four-chord song" progression. In C major: C - G - Am - F. Used in thousands of pop songs (Let It Be, Someone Like You, Take Me Home Country Roads). Very satisfying, complete sound.' },
-                { question: 'What are the seven modes of the major scale?', answer: 'Ionian (major), Dorian, Phrygian, Lydian, Mixolydian, Aeolian (natural minor), Locrian. Each starts on a different degree of the major scale but uses the same notes. Same key signature, different tonic and character.' }
+                { q: 'What are the 12 notes in Western music?', a: 'C, C#/Db, D, D#/Eb, E, F, F#/Gb, G, G#/Ab, A, A#/Bb, B' },
+                { q: 'What is the formula for a major scale?', a: 'Whole-Whole-Half-Whole-Whole-Whole-Half (W-W-H-W-W-W-H)' },
+                { q: 'What notes make up a C major triad?', a: 'C - E - G' }
             ],
             'us-civil-war': [
-                { question: 'What were the primary causes of the American Civil War?', answer: '1) Slavery - The central issue: Southern states wanted to preserve slavery, Northern states opposed its expansion. 2) States\' Rights - Dispute over federal vs. state authority. 3) Economic Differences - Industrial North vs. Agricultural South. 4) Westward Expansion - Conflict over whether new states would allow slavery. 5) Election of Lincoln (1860) - Southern states seceded after his election.' },
-                { question: 'When did the Civil War begin and what event started it?', answer: 'The war began on April 12, 1861 when Confederate forces fired on Fort Sumter in Charleston Harbor, South Carolina. The Union garrison surrendered after 34 hours of bombardment. No lives were lost during the actual battle, but it marked the start of the bloodiest conflict in American history.' },
-                { question: 'Who were the Presidents of the Union and Confederacy during the Civil War?', answer: 'Union: Abraham Lincoln (1861-1865) - Led the nation through the war, issued Emancipation Proclamation. Confederacy: Jefferson Davis (1861-1865) - Former U.S. Senator from Mississippi, West Point graduate.' },
-                { question: 'What was the Emancipation Proclamation and when did it take effect?', answer: 'Issued by Lincoln on January 1, 1863. Declared all enslaved people in Confederate-held territory to be "forever free." Did NOT apply to border states still in Union. Transformed the war from preserving the Union to abolishing slavery. Allowed Black men to join Union Army.' },
-                { question: 'What happened at the Battle of Gettysburg and why was it the turning point?', answer: 'Fought July 1-3, 1863, in Pennsylvania. Largest battle of the war with approximately 51,000 total casualties. Lee\'s second invasion of the North ended in defeat. Pickett\'s Charge (July 3) - disastrous Confederate assault on Union center. Combined with Vicksburg victory, marked the war\'s turning point.' },
-                { question: 'What did Lincoln say in the Gettysburg Address?', answer: 'Delivered November 19, 1863, at dedication of Soldiers\' National Cemetery. Only 272 words lasting about 2 minutes. Redefined war\'s purpose: "government of the people, by the people, for the people, shall not perish from the earth." Honored fallen soldiers while affirming commitment to equality and democracy.' },
-                { question: 'What was Shermans March to the Sea?', answer: 'November-December 1864 - Union General William Tecumseh Sherman marched army from Atlanta to Savannah, Georgia (300 miles). Practiced "scorched earth" warfare - destroyed railroads, farms, industry, and civilian property. Estimated $100 million in damage. Presented Savannah to Lincoln as Christmas gift.' },
-                { question: 'When and where did Robert E. Lee surrender to Ulysses S. Grant?', answer: 'April 9, 1865 at Appomattox Court House, Virginia. Lee surrendered Army of Northern Virginia after being surrounded. Grant offered generous terms: officers kept sidearms, soldiers paroled, cavalrymen kept horses. Lee accepted terms. Other Confederate armies surrendered over following weeks.' },
-                { question: 'When and where was Abraham Lincoln assassinated?', answer: 'April 14, 1865 (Good Friday) at Ford\'s Theatre in Washington D.C. Shot in the head by John Wilkes Booth, a famous actor and Confederate sympathizer, while watching the play "Our American Cousin." Died the next morning. Booth escaped, tracked down and killed 12 days later in Virginia.' },
-                { question: 'How many casualties were there in the Civil War?', answer: 'Approximately 620,000 to 750,000 deaths total - more than all other American wars combined until Vietnam. Union: ~360,000 dead. Confederacy: ~260,000 dead. About 2% of American population died. Approximately 475,000 wounded. Devastating demographic impact, especially on Southern male population.' },
-                { question: 'What was the 13th Amendment?', answer: 'Ratified December 6, 1865 - Abolished slavery and involuntary servitude throughout the United States. Passed by Senate April 1864, House January 1865. First of three "Reconstruction Amendments." Made Emancipation Proclamation\'s freedom permanent and universal (including border states).' },
-                { question: 'What was Reconstruction?', answer: 'Period (1865-1877) of rebuilding and reintegrating Southern states into Union. Three phases: 1) Presidential Reconstruction (Johnson): Pardoned Confederates, opposed civil rights. 2) Congressional/Radical Reconstruction (1867-1877): Military occupation, Black voting rights, 14th and 15th Amendments. 3) Redemption: White Southern Democrats regained power, Jim Crow laws enacted.' }
+                { q: 'When did the Civil War begin?', a: 'April 12, 1861' },
+                { q: 'Who was the Union President?', a: 'Abraham Lincoln' },
+                { q: 'What was the Emancipation Proclamation?', a: 'Issued January 1, 1863, declared enslaved people in Confederate territory free.' }
             ]
         };
 
-        let currentDeck = [];
-        let currentIndex = 0;
-        let isFlipped = false;
+        let currentDeckKey = '', currentDeck = [], currentIndex = 0, isFlipped = false, studyMode = 'review', cardData = {};
 
-        const card = document.getElementById('card');
-        const questionEl = document.getElementById('question');
-        const answerEl = document.getElementById('answer');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-        const deckSelector = document.getElementById('deckSelector');
+        function loadCardData() {
+            const saved = localStorage.getItem('flashcardData');
+            if (saved) cardData = JSON.parse(saved);
+        }
 
-        function parseMarkdown(text) {
-            return text
-                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.+?)\*/g, '<em>$1</em>')
-                .replace(/`(.+?)`/g, '<code>$1</code>');
+        function saveCardData() {
+            localStorage.setItem('flashcardData', JSON.stringify(cardData));
+        }
+
+        function initDeckData(deckKey) {
+            if (!cardData[deckKey]) cardData[deckKey] = {};
+            decks[deckKey].forEach((card, index) => {
+                if (!cardData[deckKey][index]) {
+                    cardData[deckKey][index] = { ease: 2.5, interval: 0, repetitions: 0, dueDate: null, lastReviewed: null };
+                }
+            });
+            saveCardData();
+        }
+
+        function getDueCards(deckKey) {
+            const now = new Date().getTime();
+            const dueCards = [], newCards = [];
+            decks[deckKey].forEach((card, index) => {
+                const data = cardData[deckKey][index];
+                if (data.dueDate === null) newCards.push({ card: {question: card.q, answer: card.a}, index, data });
+                else if (data.dueDate <= now) dueCards.push({ card: {question: card.q, answer: card.a}, index, data });
+            });
+            return { dueCards, newCards };
+        }
+
+        function calculateInterval(data, rating) {
+            if (rating === 'again') return { interval: 60, ease: Math.max(1.3, data.ease - 0.2), repetitions: 0 };
+            if (rating === 'hard') return { interval: data.repetitions === 0 ? 86400 : data.interval * 1.2, ease: Math.max(1.3, data.ease - 0.15), repetitions: data.repetitions + 1 };
+            if (rating === 'good') {
+                let interval;
+                if (data.repetitions === 0) interval = 86400 * 2;
+                else if (data.repetitions === 1) interval = 86400 * 6;
+                else interval = data.interval * 2.5;
+                return { interval, ease: data.ease, repetitions: data.repetitions + 1 };
+            }
+            if (rating === 'easy') return { interval: data.repetitions === 0 ? 86400 * 4 : data.interval * 4, ease: data.ease + 0.15, repetitions: data.repetitions + 1 };
+        }
+
+        function formatInterval(seconds) {
+            if (seconds < 60) return '< 1m';
+            if (seconds < 3600) return Math.round(seconds / 60) + 'm';
+            if (seconds < 86400) return Math.round(seconds / 3600) + 'h';
+            return Math.round(seconds / 86400) + 'd';
+        }
+
+        function updateIntervalDisplay() {
+            if (currentDeck.length === 0) return;
+            const data = currentDeck[currentIndex].data;
+            document.querySelector('.diff-btn-again .interval').textContent = '< 1m';
+            document.getElementById('hardInterval').textContent = formatInterval(calculateInterval(data, 'hard').interval);
+            document.getElementById('goodInterval').textContent = formatInterval(calculateInterval(data, 'good').interval);
+            document.getElementById('easyInterval').textContent = formatInterval(calculateInterval(data, 'easy').interval);
+        }
+
+        function rateCard(rating) {
+            if (currentDeck.length === 0) return;
+            const currentCard = currentDeck[currentIndex];
+            const result = calculateInterval(currentCard.data, rating);
+            
+            cardData[currentDeckKey][currentCard.index] = {
+                ease: result.ease, interval: result.interval, repetitions: result.repetitions,
+                dueDate: new Date().getTime() + (result.interval * 1000), lastReviewed: new Date().getTime()
+            };
+            saveCardData();
+            
+            if (studyMode === 'review') {
+                currentDeck.splice(currentIndex, 1);
+                if (currentIndex >= currentDeck.length) currentIndex = Math.max(0, currentDeck.length - 1);
+            } else {
+                currentIndex++;
+                if (currentIndex >= currentDeck.length) currentIndex = 0;
+            }
+            
+            isFlipped = false;
+            document.getElementById('card').classList.remove('flipped');
+            document.getElementById('difficultyButtons').classList.remove('visible');
+            document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            
+            updateStats();
+            if (currentDeck.length === 0) showCompletion();
+            else renderCard();
+        }
+
+        function updateStats() {
+            const { dueCards, newCards } = getDueCards(currentDeckKey);
+            const learned = Object.values(cardData[currentDeckKey] || {}).filter(d => d.repetitions > 0).length;
+            document.getElementById('dueCount').textContent = dueCards.length;
+            document.getElementById('newCount').textContent = newCards.length;
+            document.getElementById('learnedCount').textContent = learned;
+        }
+
+        function setMode(mode) {
+            studyMode = mode;
+            document.getElementById('reviewModeBtn').classList.toggle('active', mode === 'review');
+            document.getElementById('studyModeBtn').classList.toggle('active', mode === 'study');
+            loadDeck(currentDeckKey);
+        }
+
+        function showCompletion() {
+            document.getElementById('cardContainer').style.display = 'none';
+            document.getElementById('controls').style.display = 'none';
+            document.getElementById('difficultyButtons').style.display = 'none';
+            document.getElementById('instructions').style.display = 'none';
+            document.getElementById('progressContainer').style.display = 'none';
+            document.getElementById('completionMessage').style.display = 'block';
+            
+            const now = new Date().getTime();
+            let nextDue = Infinity;
+            Object.values(cardData[currentDeckKey] || {}).forEach(data => {
+                if (data.dueDate && data.dueDate > now && data.dueDate < nextDue) nextDue = data.dueDate;
+            });
+            
+            if (nextDue !== Infinity) {
+                const diff = Math.ceil((nextDue - now) / (1000 * 60 * 60));
+                document.getElementById('nextReviewInfo').textContent = diff < 24 ? `Next review in ${diff} hours` : `Next review in ${Math.ceil(diff / 24)} days`;
+            } else {
+                document.getElementById('nextReviewInfo').textContent = 'All cards learned!';
+            }
         }
 
         function loadDeck(deckKey) {
-            currentDeck = decks[deckKey] || [];
-            currentIndex = 0;
-            isFlipped = false;
-            card.classList.remove('flipped');
-            updateCard();
+            if (!deckKey) return;
+            currentDeckKey = deckKey;
+            initDeckData(deckKey);
+            
+            if (studyMode === 'review') {
+                const { dueCards, newCards } = getDueCards(deckKey);
+                currentDeck = [...dueCards, ...newCards.slice(0, 5)];
+            } else {
+                currentDeck = decks[deckKey].map((card, index) => ({ card: {question: card.q, answer: card.a}, index, data: cardData[deckKey][index] }));
+            }
+            
+            currentIndex = 0; isFlipped = false;
+            document.getElementById('card').classList.remove('flipped');
+            document.getElementById('difficultyButtons').classList.remove('visible');
+            document.getElementById('completionMessage').style.display = 'none';
+            document.getElementById('cardContainer').style.display = 'flex';
+            document.getElementById('controls').style.display = 'flex';
+            document.getElementById('instructions').style.display = 'block';
+            document.getElementById('progressContainer').style.display = 'block';
+            
+            updateStats();
+            if (currentDeck.length === 0) showCompletion();
+            else renderCard();
         }
 
-        function updateCard() {
-            if (currentDeck.length === 0) {
-                questionEl.innerHTML = 'No cards available';
-                answerEl.innerHTML = '';
-                return;
-            }
-
-            const card = currentDeck[currentIndex];
-            questionEl.innerHTML = parseMarkdown(card.question);
-            answerEl.innerHTML = parseMarkdown(card.answer);
-            
-            const progress = ((currentIndex + 1) / currentDeck.length) * 100;
-            progressFill.style.width = `${progress}%`;
-            progressText.textContent = `Card ${currentIndex + 1} of ${currentDeck.length}`;
+        function renderCard() {
+            if (currentDeck.length === 0) return;
+            const current = currentDeck[currentIndex];
+            document.getElementById('question').innerHTML = current.card.question.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`(.+?)`/g, '<code>$1</code>');
+            document.getElementById('answer').innerHTML = current.card.answer.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/`(.+?)`/g, '<code>$1</code>');
+            document.getElementById('progressText').textContent = `Card ${currentIndex + 1} of ${currentDeck.length}`;
+            document.getElementById('progressFill').style.width = `${((currentIndex + 1) / currentDeck.length) * 100}%`;
+            updateIntervalDisplay();
         }
 
         function flipCard() {
             isFlipped = !isFlipped;
-            card.classList.toggle('flipped', isFlipped);
+            document.getElementById('card').classList.toggle('flipped', isFlipped);
+            if (isFlipped && studyMode === 'review') {
+                document.getElementById('difficultyButtons').classList.add('visible');
+                document.getElementById('controls').classList.add('hidden');
+                document.getElementById('instructions').classList.add('hidden');
+            }
         }
 
         function nextCard() {
-            if (currentIndex < currentDeck.length - 1) {
-                currentIndex++;
-                isFlipped = false;
-                card.classList.remove('flipped');
-                
-                card.classList.add('swiping-right');
-                setTimeout(() => {
-                    updateCard();
-                    card.classList.remove('swiping-right');
-                }, 150);
-            }
+            if (currentDeck.length === 0) return;
+            currentIndex = (currentIndex + 1) % currentDeck.length;
+            isFlipped = false;
+            document.getElementById('card').classList.remove('flipped');
+            document.getElementById('difficultyButtons').classList.remove('visible');
+            document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            renderCard();
         }
 
         function prevCard() {
-            if (currentIndex > 0) {
-                currentIndex--;
-                isFlipped = false;
-                card.classList.remove('flipped');
-                
-                card.classList.add('swiping-left');
-                setTimeout(() => {
-                    updateCard();
-                    card.classList.remove('swiping-left');
-                }, 150);
+            if (currentDeck.length === 0) return;
+            currentIndex = (currentIndex - 1 + currentDeck.length) % currentDeck.length;
+            isFlipped = false;
+            document.getElementById('card').classList.remove('flipped');
+            document.getElementById('difficultyButtons').classList.remove('visible');
+            document.getElementById('controls').classList.remove('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            renderCard();
+        }
+
+        function resetProgress() {
+            if (confirm('Reset all progress for this deck?')) {
+                delete cardData[currentDeckKey];
+                saveCardData();
+                loadDeck(currentDeckKey);
             }
         }
 
-        // Touch/Swipe handling
+        // Event listeners
+        document.getElementById('card').addEventListener('click', flipCard);
+        document.getElementById('prevBtn').addEventListener('click', prevCard);
+        document.getElementById('nextBtn').addEventListener('click', nextCard);
+        document.getElementById('deckSelector').addEventListener('change', (e) => loadDeck(e.target.value));
+
+        // Touch handling
         let touchStartX = 0;
-        let touchEndX = 0;
-
-        card.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
+        document.getElementById('card').addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+        document.getElementById('card').addEventListener('touchend', (e) => {
+            const diff = touchStartX - e.changedTouches[0].screenX;
+            if (Math.abs(diff) > 50) diff > 0 ? nextCard() : prevCard();
         }, { passive: true });
-
-        card.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleSwipe();
-        }, { passive: true });
-
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const diff = touchStartX - touchEndX;
-
-            if (Math.abs(diff) > swipeThreshold) {
-                if (diff > 0) {
-                    nextCard();
-                } else {
-                    prevCard();
-                }
-            }
-        }
-
-        // Click/Tap handling
-        let touchStartTime = 0;
-        
-        card.addEventListener('touchstart', () => {
-            touchStartTime = Date.now();
-        }, { passive: true });
-
-        card.addEventListener('touchend', (e) => {
-            const touchDuration = Date.now() - touchStartTime;
-            if (touchDuration < 200 && Math.abs(touchStartX - touchEndX) < 10) {
-                flipCard();
-            }
-        }, { passive: true });
-
-        card.addEventListener('click', (e) => {
-            if (e.target.tagName !== 'BUTTON') {
-                flipCard();
-            }
-        });
-
-        document.getElementById('prevBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            prevCard();
-        });
-
-        document.getElementById('nextBtn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            nextCard();
-        });
-
-        deckSelector.addEventListener('change', (e) => {
-            loadDeck(e.target.value);
-        });
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') prevCard();
             if (e.key === 'ArrowRight') nextCard();
-            if (e.key === ' ' || e.key === 'Enter') {
-                e.preventDefault();
-                flipCard();
-            }
+            if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
         });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
+            loadCardData();
             document.getElementById('loading').style.display = 'none';
             document.getElementById('header').style.display = 'block';
-            document.getElementById('progressContainer').style.display = 'block';
-            document.getElementById('cardContainer').style.display = 'flex';
-            document.getElementById('controls').style.display = 'flex';
-            document.getElementById('instructions').style.display = 'block';
-            
-            loadDeck(deckSelector.value);
+            loadDeck('sql-data-engineering');
         });
     </script>
 </body>
