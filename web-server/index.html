@@ -265,6 +265,7 @@
             <option value="sql-data-engineering">SQL Data Engineering</option>
             <option value="sql-server-dba">SQL Server DBA</option>
             <option value="tsql-keys">T-SQL Keys</option>
+            <option value="music-theory">Music Theory</option>
         </select>
     </div>
 
@@ -334,6 +335,18 @@
                 { question: 'What is an **Alternate Key**?', answer: 'Any candidate key that is not chosen as the primary key. Can have unique constraints placed on them.' },
                 { question: 'What is **ON DELETE CASCADE**?', answer: 'When a row in the parent table is deleted, all related rows in the child table are automatically deleted. Use with caution as it can cause unintended data loss.' },
                 { question: 'Can a Foreign Key reference a **Unique Constraint**?', answer: 'Yes, a foreign key can reference either a primary key or a unique constraint (alternate key) in the referenced table.' }
+            ],
+            'music-theory': [
+                { question: 'What are the 12 notes in Western music (chromatic scale)?', answer: 'C, C#/Db, D, D#/Eb, E, F, F#/Gb, G, G#/Ab, A, A#/Bb, B. The sharp (#) raises a note by a half step; flat (b) lowers by a half step. Enharmonic equivalents (like C# and Db) are the same pitch but named differently depending on the key.' },
+                { question: 'What is the formula for a major scale?', answer: 'Whole-Whole-Half-Whole-Whole-Whole-Half (W-W-H-W-W-W-H). For example, C major: C (W) D (W) E (H) F (W) G (W) A (W) B (H) C. This creates the characteristic "do-re-mi-fa-sol-la-ti-do" sound.' },
+                { question: 'What notes make up a C major triad?', answer: 'C - E - G. Root (C) + Major Third (E) + Perfect Fifth (G). These are the 1st, 3rd, and 5th notes of the C major scale. Happy, stable sound.' },
+                { question: 'What is the formula for building a minor triad?', answer: 'Root + Minor Third (3 half steps up) + Perfect Fifth (7 half steps up from root). For example, A minor: A (root) + C (minor 3rd) + E (perfect 5th). The minor third gives it a sad, dark sound.' },
+                { question: 'What is a perfect fifth interval?', answer: 'Seven half steps. For example, C to G. Called a "perfect fifth" or "P5". Very stable, consonant sound. First two notes of "Twinkle Twinkle Little Star." Power chords are built from root + perfect fifth.' },
+                { question: 'What is a tritone interval?', answer: 'Six half steps (three whole steps). Also called augmented fourth or diminished fifth. For example, C to F# or C to Gb. Very dissonant, unstable sound. Called "the devil in music" in medieval times.' },
+                { question: 'What notes make up a C dominant 7 chord?', answer: 'C - E - G - Bb. Root + Major Third + Perfect Fifth + Minor Seventh (10 half steps from root). Also written as C7. Bluesy, tense sound. Wants to resolve to F major.' },
+                { question: 'What is the order of sharps in key signatures?', answer: 'F# - C# - G# - D# - A# - E# - B#. Mnemonic: "Father Charles Goes Down And Ends Battle" or "Fat Cats Go Down Alleys Eating Birds." Each new sharp adds a fifth up from the previous.' },
+                { question: 'What is the I - V - vi - IV chord progression?', answer: 'The "Axis of Awesome" or "four-chord song" progression. In C major: C - G - Am - F. Used in thousands of pop songs (Let It Be, Someone Like You, Take Me Home Country Roads). Very satisfying, complete sound.' },
+                { question: 'What are the seven modes of the major scale?', answer: 'Ionian (major), Dorian, Phrygian, Lydian, Mixolydian, Aeolian (natural minor), Locrian. Each starts on a different degree of the major scale but uses the same notes. Same key signature, different tonic and character.' }
             ]
         };
 

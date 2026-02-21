@@ -1,0 +1,336 @@
+# Music Theory Flashcards
+
+## Notes and Pitch
+
+**Question: What are the 12 notes in Western music (chromatic scale)?**
+**Answer:** C, C#/Db, D, D#/Eb, E, F, F#/Gb, G, G#/Ab, A, A#/Bb, B. The sharp (#) raises a note by a half step; flat (b) lowers by a half step. Enharmonic equivalents (like C# and Db) are the same pitch but named differently depending on the key.
+
+---
+
+**Question: What is the difference between a half step (semitone) and a whole step (whole tone)?**
+**Answer:** A half step is the distance between two adjacent notes on the piano (one key apart), like C to C#. A whole step is two half steps (skip one key), like C to D. On guitar, a half step is one fret; a whole step is two frets.
+
+---
+
+**Question: What is the formula for a major scale?**
+**Answer:** Whole-Whole-Half-Whole-Whole-Whole-Half (W-W-H-W-W-W-H). For example, C major: C (W) D (W) E (H) F (W) G (W) A (W) B (H) C. This creates the characteristic "do-re-mi-fa-sol-la-ti-do" sound.
+
+---
+
+**Question: What is the formula for a natural minor scale?**
+**Answer:** Whole-Half-Whole-Whole-Half-Whole-Whole (W-H-W-W-H-W-W). For example, A minor: A (W) B (H) C (W) D (W) E (H) F (W) G (W) A. It has a darker, sadder sound than major.
+
+---
+
+**Question: What are the notes in the key of C major?**
+**Answer:** C - D - E - F - G - A - B - C. No sharps or flats. This is the "white keys" scale on piano. The relative minor is A minor (same notes, starts on A).
+
+---
+
+**Question: What are the notes in the key of G major?**
+**Answer:** G - A - B - C - D - E - F# - G. One sharp: F#. Follows the W-W-H-W-W-W-H pattern. The relative minor is E minor.
+
+---
+
+**Question: What are the notes in the key of F major?**
+**Answer:** F - G - A - Bb - C - D - E - F. One flat: Bb. The relative minor is D minor.
+
+---
+
+## Intervals
+
+**Question: What is a perfect unison interval?**
+**Answer:** The same note played twice (distance of 0 half steps). For example, C to C. Labeled as P1. All other intervals are measured from this baseline.
+
+---
+
+**Question: What is a major second interval?**
+**Answer:** Two half steps (one whole step). For example, C to D. Called a "major second" or "M2". Sounds like the first two notes of "Happy Birthday."
+
+---
+
+**Question: What is a minor third interval?**
+**Answer:** Three half steps. For example, C to Eb. Called a "minor third" or "m3". Has a sad, melancholy sound. First two notes of "Greensleeves" or "Smoke on the Water" riff.
+
+---
+
+**Question: What is a major third interval?**
+**Answer:** Four half steps (two whole steps). For example, C to E. Called a "major third" or "M3". Has a bright, happy sound. First two notes of "When the Saints Go Marching In."
+
+---
+
+**Question: What is a perfect fifth interval?**
+**Answer:** Seven half steps. For example, C to G. Called a "perfect fifth" or "P5". Very stable, consonant sound. First two notes of "Twinkle Twinkle Little Star." Power chords are built from root + perfect fifth.
+
+---
+
+**Question: What is an octave interval?**
+**Answer:** Twelve half steps. For example, C to the next C up. Same note name, double the frequency. Called "P8" (perfect octave). Sounds like the same note but higher/lower.
+
+---
+
+**Question: What is a tritone interval?**
+**Answer:** Six half steps (three whole steps). Also called augmented fourth or diminished fifth. For example, C to F# or C to Gb. Very dissonant, unstable sound. Called "the devil in music" in medieval times. Used in heavy metal and jazz.
+
+---
+
+## Chords - Triads
+
+**Question: What notes make up a C major triad?**
+**Answer:** C - E - G. Root (C) + Major Third (E) + Perfect Fifth (G). These are the 1st, 3rd, and 5th notes of the C major scale. Happy, stable sound.
+
+---
+
+**Question: What is the formula for building a major triad?**
+**Answer:** Root + Major Third (4 half steps up) + Perfect Fifth (7 half steps up from root). For example, G major: G (root) + B (major 3rd) + D (perfect 5th).
+
+---
+
+**Question: What notes make up a C minor triad?**
+**Answer:** C - Eb - G. Root (C) + Minor Third (Eb) + Perfect Fifth (G). The minor third gives it a sad, dark sound compared to major.
+
+---
+
+**Question: What is the formula for building a minor triad?**
+**Answer:** Root + Minor Third (3 half steps up) + Perfect Fifth (7 half steps up from root). For example, A minor: A (root) + C (minor 3rd) + E (perfect 5th).
+
+---
+
+**Question: What is a diminished triad?**
+**Answer:** Root + Minor Third + Diminished Fifth (6 half steps from root). For example, C diminished: C - Eb - Gb. Has a tense, unstable sound. The fifth is lowered by a half step compared to minor.
+
+---
+
+**Question: What is an augmented triad?**
+**Answer:** Root + Major Third + Augmented Fifth (8 half steps from root). For example, C augmented: C - E - G#. Has a dreamy, unsettled sound. The fifth is raised by a half step compared to major.
+
+---
+
+## Seventh Chords
+
+**Question: What notes make up a C major 7 chord?**
+**Answer:** C - E - G - B. Root + Major Third + Perfect Fifth + Major Seventh (11 half steps from root). The major 7th is one half step down from the root octave. Jazzy, sophisticated sound.
+
+---
+
+**Question: What notes make up a C dominant 7 chord?**
+**Answer:** C - E - G - Bb. Root + Major Third + Perfect Fifth + Minor Seventh (10 half steps from root). Also written as C7. Bluesy, tense sound. Wants to resolve to F major.
+
+---
+
+**Question: What notes make up a C minor 7 chord?**
+**Answer:** C - Eb - G - Bb. Root + Minor Third + Perfect Fifth + Minor Seventh. Also written as Cm7 or Cmin7. Mellow, laid-back sound. Common in jazz, R&B, and bossa nova.
+
+---
+
+**Question: What is the difference between C7, Cmaj7, and Cm7?**
+**Answer:** C7 (dominant 7): C-E-G-Bb - major triad + minor 7th. Cmaj7: C-E-G-B - major triad + major 7th. Cm7: C-Eb-G-Bb - minor triad + minor 7th. Each has a distinct sound and function.
+
+---
+
+**Question: What is a half-diminished seventh chord (m7b5)?**
+**Answer:** Root + Minor Third + Diminished Fifth + Minor Seventh. For example, Cm7b5: C - Eb - Gb - Bb. Also called "C half-diminished." Very tense, used as ii chord in minor key ii-V-i progressions.
+
+---
+
+## Key Signatures
+
+**Question: What is the order of sharps in key signatures?**
+**Answer:** F# - C# - G# - D# - A# - E# - B#. Mnemonic: "Father Charles Goes Down And Ends Battle" or "Fat Cats Go Down Alleys Eating Birds." Each new sharp adds a fifth up from the previous.
+
+---
+
+**Question: What is the order of flats in key signatures?**
+**Answer:** Bb - Eb - Ab - Db - Gb - Cb - Fb. Mnemonic: "Battle Ends And Down Goes Charles' Father" (reverse of sharps). Each new flat adds a fifth down (or fourth up) from the previous.
+
+---
+
+**Question: How do you determine the major key from a sharp key signature?**
+**Answer:** Go up a half step from the last sharp. For example, key signature with F# and C# (last sharp is C#): up a half step from C# is D. Key is D major.
+
+---
+
+**Question: How do you determine the major key from a flat key signature?**
+**Answer:** The second-to-last flat is the key name. For example, key signature with Bb, Eb, Ab: second-to-last flat is Eb. Key is Eb major. Exception: One flat = F major; no flats = C major.
+
+---
+
+**Question: How many sharps are in the key of A major?**
+**Answer:** Three sharps: F#, C#, G#. Follows the order of sharps (Father Charles Goes...). The relative minor is F# minor.
+
+---
+
+**Question: How many flats are in the key of Db major?**
+**Answer:** Five flats: Bb, Eb, Ab, Db, Gb. Follows the order of flats (Battle Ends And Down Goes...). The relative minor is Bb minor.
+
+---
+
+## Circle of Fifths
+
+**Question: What is the Circle of Fifths?**
+**Answer:** A visual diagram showing all 12 major and minor keys arranged by perfect fifth intervals. Clockwise: add sharps (up a fifth each time). Counter-clockwise: add flats (down a fifth each time). Opposite keys are tritone apart.
+
+---
+
+**Question: What key is one step clockwise from C major on the Circle of Fifths?**
+**Answer:** G major (one sharp: F#). Moving clockwise adds a sharp (up a perfect fifth). C → G → D → A → E → B → F# → C# (enharmonic with Db).
+
+---
+
+**Question: What key is one step counter-clockwise from C major on the Circle of Fifths?**
+**Answer:** F major (one flat: Bb). Moving counter-clockwise adds a flat (down a perfect fifth, or up a fourth). C → F → Bb → Eb → Ab → Db → Gb → Cb (enharmonic with B).
+
+---
+
+**Question: What is the relative minor of C major?**
+**Answer:** A minor. Relative minor is always three half steps (minor third) down from the major key. Same key signature, different tonic. A minor: A - B - C - D - E - F - G - A (no sharps or flats).
+
+---
+
+**Question: What is the relative minor of G major?**
+**Answer:** E minor. Three half steps down from G is E. Same key signature (one sharp: F#). E minor scale: E - F# - G - A - B - C - D - E.
+
+---
+
+## Chord Progressions
+
+**Question: What is the I - V - vi - IV chord progression?**
+**Answer:** The "Axis of Awesome" or "four-chord song" progression. In C major: C - G - Am - F. Used in thousands of pop songs (Let It Be, Someone Like You, Take Me Home Country Roads). Very satisfying, complete sound.
+
+---
+
+**Question: What is a ii - V - I progression in jazz?**
+**Answer:** The most common jazz chord progression. In C major: Dm7 - G7 - Cmaj7. ii chord is minor 7th, V chord is dominant 7th, I chord is major 7th. Creates strong resolution to the tonic.
+
+---
+
+**Question: What is the 12-bar blues progression?**
+**Answer:** I - I - I - I - IV - IV - I - I - V - IV - I - V (or variations). In E blues: E7 (4 bars) - A7 (2 bars) - E7 (2 bars) - B7 - A7 - E7 - B7. Foundation of blues, rock, and jazz.
+
+---
+
+**Question: What are the diatonic chords in C major?**
+**Answer:** I - C major, ii - D minor, iii - E minor, IV - F major, V - G major, vi - A minor, vii° - B diminished. These are the naturally occurring triads in the key, built on each scale degree.
+
+---
+
+**Question: Why does the V chord want to resolve to I?**
+**Answer:** The V chord contains the leading tone (7th scale degree), which is a half step below the tonic. This creates strong tension that wants to resolve upward. Also, the V chord shares one note with I (the fifth of I = root of V), creating a smooth voice-leading connection.
+
+---
+
+## Modes
+
+**Question: What are the seven modes of the major scale?**
+**Answer:** Ionian (major), Dorian, Phrygian, Lydian, Mixolydian, Aeolian (natural minor), Locrian. Each starts on a different degree of the major scale but uses the same notes. Same key signature, different tonic and character.
+
+---
+
+**Question: What is the Dorian mode?**
+**Answer:** Starts on the 2nd degree of major scale. Like natural minor but with raised 6th. Formula: W-H-W-W-W-H-W. Example: D Dorian (C major notes): D - E - F - G - A - B - C - D. Jazzy, soulful sound ("So What" by Miles Davis, "Oye Como Va").
+
+---
+
+**Question: What is the Mixolydian mode?**
+**Answer:** Starts on the 5th degree of major scale. Like major but with lowered 7th. Formula: W-W-H-W-W-H-W. Example: G Mixolydian (C major notes): G - A - B - C - D - E - F - G. Bluesy, rock sound ("Sweet Child O' Mine" intro, "Norwegian Wood").
+
+---
+
+**Question: What is the Lydian mode?**
+**Answer:** Starts on the 4th degree of major scale. Like major but with raised 4th. Formula: W-W-W-H-W-W-H. Example: F Lydian (C major notes): F - G - A - B - C - D - E - F. Dreamy, floating sound ("Simpsons" theme, "Flying" by Beatles).
+
+---
+
+**Question: What is the Phrygian mode?**
+**Answer:** Starts on the 3rd degree of major scale. Like natural minor but with lowered 2nd. Formula: H-W-W-W-H-W-W. Example: E Phrygian (C major notes): E - F - G - A - B - C - D - E. Dark, Spanish/flamenco sound.
+
+---
+
+## Rhythm and Meter
+
+**Question: What does the top number in a time signature mean?**
+**Answer:** The number of beats per measure (bar). For example, in 4/4, there are 4 beats per measure. In 3/4, there are 3 beats per measure (waltz time).
+
+---
+
+**Question: What does the bottom number in a time signature mean?**
+**Answer:** Which note value gets one beat. 4 = quarter note gets one beat, 8 = eighth note gets one beat, 2 = half note gets one beat. So 6/8 = 6 eighth notes per measure (compound duple meter).
+
+---
+
+**Question: What is the difference between 4/4 and 6/8 time?**
+**Answer:** 4/4 = simple quadruple meter (4 quarter-note beats, strong-weak-medium-weak). 6/8 = compound duple meter (6 eighth notes grouped in 2, each group = dotted quarter note, strong-weak-weak-medium-weak-weak). 6/8 has a rolling, swaying feel.
+
+---
+
+**Question: What is syncopation?**
+**Answer:** Accenting beats that are normally weak or off-beats. Creates rhythmic tension and forward momentum. Common in jazz, funk, Latin music. Example: emphasizing the "and" of the beat (1-and-2-and-3-and-4-and).
+
+---
+
+**Question: What are tuplets?**
+**Answer:** Playing a different number of notes in the space normally occupied by another. Most common: triplets (3 notes in space of 2). Example: eighth-note triplets = 3 notes in the space of 2 eighth notes (one quarter note). Adds rhythmic variety.
+
+---
+
+**Question: What is a dotted note?**
+**Answer:** A note with a dot after it that adds half of its original value. Dotted quarter note = quarter note + eighth note (1.5 beats in 4/4). Dotted half note = half note + quarter note (3 beats in 4/4). Extends duration by 50%.
+
+---
+
+## Extended Chords and Advanced Harmony
+
+**Question: What is a C9 chord?**
+**Answer:** C - E - G - Bb - D. Dominant 9th: root, major 3rd, perfect 5th, minor 7th, major 9th. The "9" is the D (2nd scale degree, one octave up). Used in jazz, funk, and R&B for rich, colorful harmony.
+
+---
+
+**Question: What is the difference between add9 and major 9 chords?**
+**Answer:** Cadd9: C - E - G - D (triad plus 9th, NO 7th). Cmaj9: C - E - G - B - D (major 7 chord plus 9th). "Add" chords skip the 7th; "major/minor 9" chords include the 7th.
+
+---
+
+**Question: What is a sus4 chord?**
+**Answer:** Suspended fourth: root + perfect 4th + perfect 5th (no 3rd). Example: Csus4 = C - F - G. The 4th "suspends" the tension before resolving down to the 3rd (F moves to E in a C major chord). Creates anticipation.
+
+---
+
+**Question: What is a secondary dominant chord?**
+**Answer:** A dominant 7th chord that temporarily tonicizes (makes sound like home) another chord in the progression. Notated as V7/of chord. Example: in C major, D7 is V7/V (five of five) because D7 leads to G (the V chord).
+
+---
+
+**Question: What is a borrowed chord?**
+**Answer:** A chord borrowed from the parallel minor or major key. In C major, borrowing from C minor gives chords like Eb major (bIII), Ab major (bVI), and Bb major (bVII). Adds color and emotional variety.
+
+---
+
+**Question: What is voice leading?**
+**Answer:** The smooth movement of individual notes (voices) from one chord to the next. Good voice leading minimizes large jumps, avoids parallel fifths/octaves, and creates flowing, singable lines within harmonies. Essential for arranging and composition.
+
+---
+
+## Ear Training Concepts
+
+**Question: What is perfect pitch?**
+**Answer:** The ability to identify or produce any musical note without a reference tone. Rare (estimated 1 in 10,000 people). Different from relative pitch, which is the ability to identify intervals and notes relative to a known pitch.
+
+---
+
+**Question: What is relative pitch?**
+**Answer:** The ability to identify intervals, chords, and notes by their relationship to other notes or a reference pitch. Can be developed through ear training. Much more common and practical than perfect pitch for most musicians.
+
+---
+
+**Question: What is timbre?**
+**Answer:** The unique quality or "color" of a sound that distinguishes different instruments or voices, even when playing the same pitch at the same volume. Determined by the harmonic overtones and envelope of the sound. Why a piano C sounds different from a guitar C.
+
+---
+
+**Question: What is the difference between consonance and dissonance?**
+**Answer:** Consonance: intervals and chords that sound stable, harmonious, and at rest (unison, octave, perfect fifth, major/minor thirds and sixths). Dissonance: intervals that sound tense, unstable, and want to resolve (tritone, minor second, major seventh). Used together to create musical tension and release.
+
+---
+
+**Question: What is a cadence?**
+**Answer:** A chord progression that provides a sense of resolution or pause, like punctuation in music. Authentic cadence (V-I): strongest resolution. Plagal cadence (IV-I): "Amen" cadence. Half cadence (ends on V): open, unresolved. Deceptive cadence (V-vi): surprise move to relative minor.
