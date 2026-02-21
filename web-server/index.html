@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flashcards</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .header {
+            padding: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .deck-selector {
+            padding: 10px 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            min-width: 200px;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        .progress-container {
+            padding: 10px 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            margin-top: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .card-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            perspective: 1000px;
+            touch-action: pan-y;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px;
+            min-height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1), margin 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card.swiping-left {
+            margin-left: -50px;
+            opacity: 0.5;
+        }
+
+        .card.swiping-right {
+            margin-left: 50px;
+            opacity: 0.5;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            background: white;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: #333;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            color: #333;
+            transform: rotateY(180deg);
+        }
+
+        .card-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
+        .card-content {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .card-content pre {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.9rem;
+            text-align: left;
+            margin: 10px 0;
+        }
+
+        .card-content code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .controls {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            width: 60px;
+            height: 60px;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-prev {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .instructions {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 10px 20px 20px;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: white;
+            padding: 40px;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                min-height: 250px;
+            }
+            
+            .card-content {
+                font-size: 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.3rem;
+            }
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">Loading flashcards...</div>
+    
+    <div class="header" id="header" style="display: none;">
+        <h1>Study Flashcards</h1>
+        <select class="deck-selector" id="deckSelector">
+            <option value="sql-data-engineering">SQL Data Engineering</option>
+            <option value="sql-server-dba">SQL Server DBA</option>
+            <option value="tsql-keys">T-SQL Keys</option>
+        </select>
+    </div>
+
+    <div class="progress-container" id="progressContainer" style="display: none;">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <div class="progress-text" id="progressText">Card 0 of 0</div>
+    </div>
+
+    <div class="card-container" id="cardContainer" style="display: none;">
+        <div class="card" id="card">
+            <div class="card-face card-front">
+                <div class="card-label">Question</div>
+                <div class="card-content" id="question"></div>
+            </div>
+            <div class="card-face card-back">
+                <div class="card-label">Answer</div>
+                <div class="card-content" id="answer"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls" id="controls" style="display: none;">
+        <button class="btn btn-prev" id="prevBtn">&larr;</button>
+        <button class="btn btn-next" id="nextBtn">&rarr;</button>
+    </div>
+
+    <div class="instructions" id="instructions" style="display: none;">
+        Tap card to flip &bull; Swipe to navigate
+    </div>
+
+    <script>
+        const decks = {
+            'sql-data-engineering': [
+                { question: 'What is a **Data Warehouse**?', answer: 'A central repository of integrated data from multiple sources, optimized for reporting and analysis. It stores historical data and uses dimensional modeling with star/snowflake schemas.' },
+                { question: 'What is **ETL**?', answer: 'Extract, Transform, Load - the process of extracting data from source systems, transforming it (cleaning, aggregating, validating), and loading it into a target database or data warehouse.' },
+                { question: 'What is **ELT**?', answer: 'Extract, Load, Transform - data is first loaded into the target system (often a cloud data warehouse), then transformed using the target systems processing power. Better for large volumes and modern cloud platforms.' },
+                { question: 'What is **Dimensional Modeling**?', answer: 'A design technique for databases optimized for data warehousing. Uses facts (measurements/metrics) and dimensions (context/descriptive attributes). Common schemas: Star and Snowflake.' },
+                { question: 'What is a **Fact Table**?', answer: 'Contains quantitative data (facts/measurements) for analysis. Usually numeric and additive (e.g., sales amount, quantity). Has foreign keys to dimension tables.' },
+                { question: 'What is a **Dimension Table**?', answer: 'Contains descriptive attributes providing context to facts (e.g., date, customer, product details). Used for filtering, grouping, and labeling in reports.' },
+                { question: 'What is a **Star Schema**?', answer: 'A dimensional model with a central fact table surrounded by denormalized dimension tables. Simple, fast queries, easy to understand.' },
+                { question: 'What is a **Snowflake Schema**?', answer: 'A dimensional model where dimension tables are normalized into multiple related tables. More storage-efficient but requires more joins, more complex queries.' },
+                { question: 'What is **CDC (Change Data Capture)**?', answer: 'A technique to identify and capture changes made to data in a database. Used to track inserts, updates, and deletes for synchronization and auditing.' },
+                { question: 'What is **Data Lineage**?', answer: 'The complete lifecycle of data: origin, transformations, and where it moves over time. Critical for compliance, debugging, and understanding data dependencies.' }
+            ],
+            'sql-server-dba': [
+                { question: 'What are **SQL Server Recovery Models**?', answer: 'Full: Full logging, point-in-time recovery. Bulk-Logged: Minimal logging for bulk operations. Simple: Minimal logging, auto-truncates log, no point-in-time recovery.' },
+                { question: 'What is **Transaction Log Shipping**?', answer: 'High availability/disaster recovery solution that automatically sends transaction log backups from primary to secondary servers. Secondary databases can be in standby or no-recovery mode.' },
+                { question: 'What is **Database Mirroring**?', answer: 'Deprecated HA feature maintaining two copies of a database (principal and mirror) across servers. Supports automatic failover with witness server. Replaced by Always On.' },
+                { question: 'What is **Always On Availability Groups**?', answer: 'Enterprise HA/DR solution supporting multiple secondary replicas. Provides automatic failover, read-only secondaries, and backup on secondaries. Requires Windows Server Failover Clustering.' },
+                { question: 'What is a **Deadlock**?', answer: 'When two or more transactions block each other by holding locks on resources the others need. SQL Server detects and terminates one as deadlock victim (error 1205).' },
+                { question: 'How do you **troubleshoot slow queries**?', answer: 'Use execution plans, check for missing indexes, update statistics, analyze waits, review query structure, check for parameter sniffing, monitor blocking chains.' },
+                { question: 'What is **Parameter Sniffing**?', answer: 'When SQL Server optimizes a query based on the first execution parameters. Can cause poor performance for subsequent executions with different parameter values.' },
+                { question: 'What is **Fragmentation** and how to fix it?', answer: 'Logical fragmentation occurs when index pages are out of order. Rebuild index (offline/online) for >30% fragmentation, reorganize for 5-30%, <5% do nothing.' },
+                { question: 'What are **TempDB best practices**?', answer: 'Use multiple data files (1 per core up to 8), pre-size to avoid auto-growth, put on fast storage, use trace flags 1117/1118 for uniform extent allocation.' },
+                { question: 'What is **Backup Strategy**?', answer: 'Full backups periodically, differential backups for faster recovery, transaction log backups for point-in-time recovery. Test restores regularly (backup verification).' }
+            ],
+            'tsql-keys': [
+                { question: 'What is a **Primary Key**?', answer: 'Uniquely identifies each row in a table. Cannot contain NULL values. A table can have only one primary key, which may consist of single or multiple columns (composite key).' },
+                { question: 'What is a **Foreign Key**?', answer: 'Establishes a link between two tables. Ensures referential integrity by preventing actions that would destroy links between tables. Values must match primary key in referenced table or be NULL.' },
+                { question: 'What is a **Unique Key**?', answer: 'Ensures all values in a column are different. Unlike primary key, allows one NULL value. A table can have multiple unique constraints.' },
+                { question: 'What is a **Composite Key**?', answer: 'A key that consists of two or more columns used together to uniquely identify a record. Both primary and unique keys can be composite.' },
+                { question: 'What is the difference between **Primary Key and Unique Key**?', answer: 'PK: No NULLs allowed, only one per table, creates clustered index by default. UK: Allows one NULL, multiple allowed per table, creates non-clustered index by default.' },
+                { question: 'What is **Referential Integrity**?', answer: 'Ensures relationships between tables remain consistent. Enforced by foreign keys with actions: CASCADE (delete/update), SET NULL, SET DEFAULT, NO ACTION.' },
+                { question: 'What is a **Candidate Key**?', answer: 'A column or set of columns that can uniquely identify a row. A table may have multiple candidate keys, but only one is chosen as the primary key.' },
+                { question: 'What is an **Alternate Key**?', answer: 'Any candidate key that is not chosen as the primary key. Can have unique constraints placed on them.' },
+                { question: 'What is **ON DELETE CASCADE**?', answer: 'When a row in the parent table is deleted, all related rows in the child table are automatically deleted. Use with caution as it can cause unintended data loss.' },
+                { question: 'Can a Foreign Key reference a **Unique Constraint**?', answer: 'Yes, a foreign key can reference either a primary key or a unique constraint (alternate key) in the referenced table.' }
+            ]
+        };
+
+        let currentDeck = [];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        const card = document.getElementById('card');
+        const questionEl = document.getElementById('question');
+        const answerEl = document.getElementById('answer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const deckSelector = document.getElementById('deckSelector');
+
+        function parseMarkdown(text) {
+            return text
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                .replace(/`(.+?)`/g, '<code>$1</code>');
+        }
+
+        function loadDeck(deckKey) {
+            currentDeck = decks[deckKey] || [];
+            currentIndex = 0;
+            isFlipped = false;
+            card.classList.remove('flipped');
+            updateCard();
+        }
+
+        function updateCard() {
+            if (currentDeck.length === 0) {
+                questionEl.innerHTML = 'No cards available';
+                answerEl.innerHTML = '';
+                return;
+            }
+
+            const card = currentDeck[currentIndex];
+            questionEl.innerHTML = parseMarkdown(card.question);
+            answerEl.innerHTML = parseMarkdown(card.answer);
+            
+            const progress = ((currentIndex + 1) / currentDeck.length) * 100;
+            progressFill.style.width = `${progress}%`;
+            progressText.textContent = `Card ${currentIndex + 1} of ${currentDeck.length}`;
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            card.classList.toggle('flipped', isFlipped);
+        }
+
+        function nextCard() {
+            if (currentIndex < currentDeck.length - 1) {
+                currentIndex++;
+                isFlipped = false;
+                card.classList.remove('flipped');
+                
+                card.classList.add('swiping-right');
+                setTimeout(() => {
+                    updateCard();
+                    card.classList.remove('swiping-right');
+                }, 150);
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                isFlipped = false;
+                card.classList.remove('flipped');
+                
+                card.classList.add('swiping-left');
+                setTimeout(() => {
+                    updateCard();
+                    card.classList.remove('swiping-left');
+                }, 150);
+            }
+        }
+
+        // Touch/Swipe handling
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        card.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        card.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextCard();
+                } else {
+                    prevCard();
+                }
+            }
+        }
+
+        // Click/Tap handling
+        let touchStartTime = 0;
+        
+        card.addEventListener('touchstart', () => {
+            touchStartTime = Date.now();
+        }, { passive: true });
+
+        card.addEventListener('touchend', (e) => {
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 200 && Math.abs(touchStartX - touchEndX) < 10) {
+                flipCard();
+            }
+        }, { passive: true });
+
+        card.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') {
+                flipCard();
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            prevCard();
+        });
+
+        document.getElementById('nextBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            nextCard();
+        });
+
+        deckSelector.addEventListener('change', (e) => {
+            loadDeck(e.target.value);
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') prevCard();
+            if (e.key === 'ArrowRight') nextCard();
+            if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                flipCard();
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('header').style.display = 'block';
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('cardContainer').style.display = 'flex';
+            document.getElementById('controls').style.display = 'flex';
+            document.getElementById('instructions').style.display = 'block';
+            
+            loadDeck(deckSelector.value);
+        });
+    </script>
+</body>
+</html>
